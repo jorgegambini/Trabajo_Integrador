@@ -2,22 +2,23 @@ package ar.com.jg.model;
 
 import jakarta.persistence.*;
 import lombok.*;
-import lombok.experimental.FieldDefaults;
 
+import javax.swing.*;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Objects;
 
 
 @Entity
 @Table(name = "clientes")
 @AttributeOverride(name = "id", column = @Column(name = "id_cliente"))
-@Getter @Setter//(value = AccessLevel.PRIVATE)
+@Getter
+@Setter//(value = AccessLevel.PRIVATE)
 //@NoArgsConstructor @RequiredArgsConstructor //@AllArgsConstructor //(staticName = "createCliente") //(access = AccessLevel.PRIVATE)
 //@FieldDefaults(level = AccessLevel.PRIVATE, makeFinal = true)
-@ToString(callSuper = true, includeFieldNames = false, of = {"razonSocial", "cuit"})//(exclude = {"servicios", "reportesIncidencia"})
+//@ToString(callSuper = true, includeFieldNames = false, of = {"razonSocial", "cuit"})
+//(exclude = {"servicios", "reportesIncidencia"})
 @EqualsAndHashCode(callSuper = true)
-public class Cliente extends EntidadId{
+public class Cliente extends EntidadId {
 
 
     @Column(name = "razon_social", nullable = false)
@@ -28,7 +29,7 @@ public class Cliente extends EntidadId{
     @EqualsAndHashCode.Exclude
     private Long cuit;
     @ManyToMany(fetch = FetchType.LAZY, targetEntity = Servicio.class, cascade = {CascadeType.PERSIST, CascadeType.MERGE})
-    @JoinTable(name = "cliente_servicio", joinColumns = @JoinColumn(name = "id_cliente"), inverseJoinColumns = @JoinColumn(name = "id_servicio"), uniqueConstraints = @UniqueConstraint(columnNames = {"id_cliente", "id_servicio"}))
+    @JoinTable(name = "clientes_servicios", joinColumns = @JoinColumn(name = "id_cliente"), inverseJoinColumns = @JoinColumn(name = "id_servicio"), uniqueConstraints = @UniqueConstraint(columnNames = {"id_cliente", "id_servicio"}))
     @EqualsAndHashCode.Exclude
     private List<Servicio> servicios; //Many2Many
     @OneToMany(mappedBy = "cliente", cascade = CascadeType.ALL, orphanRemoval = true, fetch = FetchType.LAZY)
@@ -54,9 +55,7 @@ public class Cliente extends EntidadId{
 
     }
 
-
-
-    public Cliente addReporteIncidencia(ReporteIncidencia reporte){
+    public Cliente addReporteIncidencia(ReporteIncidencia reporte) {
 
         this.reportesIncidencia.add(reporte);
         reporte.setCliente(this);
@@ -64,7 +63,7 @@ public class Cliente extends EntidadId{
 
     }
 
-    public Cliente removeReporteIncidencia(ReporteIncidencia reporte){
+    public Cliente removeReporteIncidencia(ReporteIncidencia reporte) {
 
         this.reportesIncidencia.remove(reporte);
         reporte.setCliente(null);
@@ -72,20 +71,44 @@ public class Cliente extends EntidadId{
 
     }
 
-    public Cliente addServicio(Servicio servicio){
+    public Cliente addServicio(Servicio servicio) {
 
-        this.servicios.add(servicio);
-        servicio.getClientes().add(this);
+        if (!this.servicios.contains(servicio)) {
+
+            this.servicios.add(servicio);
+            servicio.getClientes().add(this);
+
+        } else {
+
+            JOptionPane.showMessageDialog(null, "El Servicio ya fue agregado con anterioridad.");
+
+        }
+
         return this;
 
     }
 
-    public Cliente removeServicio(Servicio servicio){
+    public Cliente removeServicio(Servicio servicio) {
 
-        this.servicios.remove(servicio);
-        servicio.getClientes().remove(this);
+        if (this.servicios.contains(servicio)) {
+
+            this.servicios.remove(servicio);
+            servicio.getClientes().remove(this);
+
+        } else {
+
+            JOptionPane.showMessageDialog(null, "La Especialidad ya fue quitada con anterioridad.");
+
+        }
+
         return this;
 
     }
 
+    @Override
+    public String toString() {
+
+        return this.razonSocial + ", CUIT: " + this.cuit;
+
+    }
 }

@@ -3,13 +3,17 @@ package ar.com.jg.view;
 import ar.com.jg.model.DatosContacto;
 import ar.com.jg.model.Especialidad;
 import ar.com.jg.model.Tecnico;
-import ar.com.jg.services.*;
+import ar.com.jg.services.TecnicoService;
+import ar.com.jg.services.TecnicoServiceImpl;
+import ar.com.jg.view.accessories.IngresarEspecialidad;
+import ar.com.jg.view.accessories.IngresarNumero;
+import ar.com.jg.view.accessories.IngresarTexto;
+import ar.com.jg.view.accessories.MostrarTecnicos;
 import jakarta.persistence.EntityManager;
-import net.miginfocom.swing.MigLayout;
+import lombok.Getter;
+import lombok.Setter;
 
 import javax.swing.*;
-import java.awt.event.ItemEvent;
-import java.awt.event.ItemListener;
 
 
 public class TecnicoForm {
@@ -19,6 +23,7 @@ public class TecnicoForm {
     private IngresarTexto ingresarTexto;
     private IngresarNumero ingresarNumero;
     private IngresarEspecialidad ingresarEspecialidad;
+    private MostrarTecnicos mostrarTecnicos;
 
     private int valorRetornado;
     private String opcionMenu;
@@ -34,16 +39,22 @@ public class TecnicoForm {
 
     private TecnicoService ts;
     Tecnico tecnico;
-    private DatosContactoService ds;
+    //private DatosContactoService ds;
     DatosContacto datosContacto;
-    private EspecialidadService es;
+    //private EspecialidadService es;
+    @Getter
+    @Setter
     Especialidad especialidad;
+
+    private EntityManager em;
 
     public TecnicoForm(EntityManager em) {
 
         ts = new TecnicoServiceImpl(em);
-        ds = new DatosContactoServiceImpl(em);
-        es = new EspecialidadServiceImpl(em);
+        //ds = new DatosContactoServiceImpl(em);
+        //es = new EspecialidadServiceImpl(em);
+
+        this.em = em;
 
         init();
 
@@ -57,11 +68,12 @@ public class TecnicoForm {
                 1 - INGRESAR UN TECNICO.<br>
                 2 - EDITAR UN TECNICO.<br>
                 3 - ELIMINAR UN TECNICO.<br>
-                4 - SALIR.<br><br></html>""";
+                4 - LISTAR TECNICOS.<br>
+                5 - SALIR.<br><br></html>""";
 
         do {
 
-            menuForm = new MenuForm(menuOperadorMesaAyuda, 200, 0);
+            menuForm = new MenuForm(menuOperadorMesaAyuda, 200, 0, 5);
             valorRetornado = JOptionPane.showOptionDialog(null, menuForm, "Seleccione una Opcion", JOptionPane.OK_OPTION, JOptionPane.INFORMATION_MESSAGE, null, new Object[]{"Aceptar"}, "Aceptar");
 
             if (JOptionPane.OK_OPTION == valorRetornado) {
@@ -85,7 +97,7 @@ public class TecnicoForm {
 
                         do {
 
-                            ingresarNumero = new IngresarNumero("Legajo:", "", 60, 60, 100);
+                            ingresarNumero = new IngresarNumero("Legajo:", "0", 60, 100, 100, true);
                             valorRetornado = JOptionPane.showOptionDialog(null, ingresarNumero, "Ingrese Legajo", JOptionPane.OK_CANCEL_OPTION, JOptionPane.INFORMATION_MESSAGE, null, null, null);
 
                             if (JOptionPane.OK_OPTION == valorRetornado) {
@@ -100,7 +112,7 @@ public class TecnicoForm {
 
                                     do {
 
-                                        ingresarTexto = new IngresarTexto("Nombre:", "", 70, 100, 0);
+                                        ingresarTexto = new IngresarTexto("Nombre:", "", 70, 150, 0);
                                         valorRetornado = JOptionPane.showOptionDialog(null, ingresarTexto, "Ingrese Nombre", JOptionPane.OK_CANCEL_OPTION, JOptionPane.INFORMATION_MESSAGE, null, null, null);
 
                                         if (JOptionPane.OK_OPTION == valorRetornado) {
@@ -115,7 +127,7 @@ public class TecnicoForm {
 
                                                 do {
 
-                                                    ingresarTexto = new IngresarTexto("Apellido:", "", 70, 100, 0);
+                                                    ingresarTexto = new IngresarTexto("Apellido:", "", 70, 150, 0);
                                                     valorRetornado = JOptionPane.showOptionDialog(null, ingresarTexto, "Ingrese Apellido", JOptionPane.OK_CANCEL_OPTION, JOptionPane.INFORMATION_MESSAGE, null, null, null);
 
                                                     if (JOptionPane.OK_OPTION == valorRetornado) {
@@ -130,7 +142,7 @@ public class TecnicoForm {
 
                                                             do {
 
-                                                                ingresarTexto = new IngresarTexto("Usuario:", "", 70, 100, 0);
+                                                                ingresarTexto = new IngresarTexto("Usuario:", "", 70, 150, 0);
                                                                 valorRetornado = JOptionPane.showOptionDialog(null, ingresarTexto, "Ingrese Usuario", JOptionPane.OK_CANCEL_OPTION, JOptionPane.INFORMATION_MESSAGE, null, null, null);
 
                                                                 if (JOptionPane.OK_OPTION == valorRetornado) {
@@ -145,7 +157,7 @@ public class TecnicoForm {
 
                                                                         do {
 
-                                                                            ingresarTexto = new IngresarTexto("Password:", "", 70, 100, 0);
+                                                                            ingresarTexto = new IngresarTexto("Password:", "", 70, 150, 0);
                                                                             valorRetornado = JOptionPane.showOptionDialog(null, ingresarTexto, "Ingrese Password", JOptionPane.OK_CANCEL_OPTION, JOptionPane.INFORMATION_MESSAGE, null, null, null);
 
                                                                             if (JOptionPane.OK_OPTION == valorRetornado) {
@@ -160,7 +172,7 @@ public class TecnicoForm {
 
                                                                                     do {
 
-                                                                                        ingresarNumero = new IngresarNumero("Telefono:", "0", 70, 100, 0);
+                                                                                        ingresarNumero = new IngresarNumero("Telefono:", "0", 70, 100, 0, true);
                                                                                         valorRetornado = JOptionPane.showOptionDialog(null, ingresarNumero, "Ingrese Telefono", JOptionPane.OK_CANCEL_OPTION, JOptionPane.INFORMATION_MESSAGE, null, null, null);
 
                                                                                         if (JOptionPane.OK_OPTION == valorRetornado) {
@@ -175,7 +187,7 @@ public class TecnicoForm {
 
                                                                                                 do {
 
-                                                                                                    ingresarNumero = new IngresarNumero("Celular:", "0", 70, 100, 0);
+                                                                                                    ingresarNumero = new IngresarNumero("Celular:", "0", 70, 100, 0, true);
                                                                                                     valorRetornado = JOptionPane.showOptionDialog(null, ingresarNumero, "Ingrese Celular", JOptionPane.OK_CANCEL_OPTION, JOptionPane.INFORMATION_MESSAGE, null, null, null);
 
                                                                                                     if (JOptionPane.OK_OPTION == valorRetornado) {
@@ -190,7 +202,7 @@ public class TecnicoForm {
 
                                                                                                             do {
 
-                                                                                                                ingresarTexto = new IngresarTexto("Email:", "", 70, 150, 0);
+                                                                                                                ingresarTexto = new IngresarTexto("Email:", "", 70, 250, 0);
                                                                                                                 valorRetornado = JOptionPane.showOptionDialog(null, ingresarTexto, "Ingrese Email", JOptionPane.OK_CANCEL_OPTION, JOptionPane.INFORMATION_MESSAGE, null, null, null);
 
                                                                                                                 if (JOptionPane.OK_OPTION == valorRetornado) {
@@ -221,24 +233,28 @@ public class TecnicoForm {
                                                                                                                             do
                                                                                                                             {
 
-                                                                                                                                ingresarEspecialidad = new IngresarEspecialidad();
+                                                                                                                                ingresarEspecialidad = new IngresarEspecialidad(em);
                                                                                                                                 valorRetornado = JOptionPane.showOptionDialog(null, ingresarEspecialidad, "Ingrese Especialidad", JOptionPane.OK_CANCEL_OPTION, JOptionPane.INFORMATION_MESSAGE, null, null, null);
 
                                                                                                                                 if (JOptionPane.OK_OPTION == valorRetornado) {
 
-                                                                                                                                    tecnico.addEspecialidad(especialidad);
+                                                                                                                                    tecnico.addEspecialidad(ingresarEspecialidad.getEspecialidad());
 
                                                                                                                                 }
 
-                                                                                                                            } while (valorRetornado == JOptionPane.CLOSED_OPTION || (valorRetornado == JOptionPane.CANCEL_OPTION && tecnico.getEspecialidades().isEmpty()));
+                                                                                                                            } while (valorRetornado == JOptionPane.CLOSED_OPTION || (valorRetornado == JOptionPane.CANCEL_OPTION && tecnico.getEspecialidades().isEmpty() && ingresarEspecialidad.getCantidadElementosCombo() != 0));
 
-                                                                                                                            valorRetornado = JOptionPane.showOptionDialog(null, "Desea agregar otra especialidad", "Ingrese Especialidad", JOptionPane.OK_CANCEL_OPTION, JOptionPane.INFORMATION_MESSAGE, null, null, null);
+                                                                                                                            if (valorRetornado == JOptionPane.OK_OPTION && tecnico.getEspecialidades().size() > 0 && ingresarEspecialidad.getCantidadElementosCombo() != 0) {
+
+                                                                                                                                valorRetornado = JOptionPane.showOptionDialog(null, "Desea agregar otra especialidad?", "Ingrese Especialidad", JOptionPane.OK_CANCEL_OPTION, JOptionPane.INFORMATION_MESSAGE, null, null, null);
+
+                                                                                                                            } else
+                                                                                                                                valorRetornado = JOptionPane.CLOSED_OPTION;
 
                                                                                                                         } while (valorRetornado == JOptionPane.OK_OPTION);
 
-                                                                                                                        ts.guardarTecnico(tecnico);
-
-                                                                                                                        JOptionPane.showMessageDialog(null, "El Técnico se ha ingresado correctamente.");
+                                                                                                                        if (valorRetornado != JOptionPane.CLOSED_OPTION)
+                                                                                                                            ts.guardarTecnico(tecnico);
 
                                                                                                                     }
 
@@ -304,288 +320,305 @@ public class TecnicoForm {
                         strCelular = "";
                         email = "";
 
+//                        do {
+//
+//                            ingresarNumero = new IngresarNumero("ID:", "0", 20, 70, 130, true);
+//                            valorRetornado = JOptionPane.showOptionDialog(null, ingresarNumero, "Ingrese ID", JOptionPane.OK_CANCEL_OPTION, JOptionPane.QUESTION_MESSAGE, null, null, null);
+//
+//                            if (JOptionPane.OK_OPTION == valorRetornado) {
+//
+//                                strID = ingresarNumero.getNumero().trim();
+//
+//                                if (!validarNumero(strID)) {
+//
+//                                    JOptionPane.showMessageDialog(null, "Ingrese un Id Correcto.");
+//
+//                                } else if (ts.buscarTecnicoPorId(Long.valueOf(ingresarNumero.getNumero().trim())).isEmpty()) {
+//
+//                                    JOptionPane.showMessageDialog(null, "El Id ingresado no existe.");
+//
+//                                } else {
+
                         do {
 
-                            ingresarNumero = new IngresarNumero("ID:", "0", 20, 50, 150);
-                            valorRetornado = JOptionPane.showOptionDialog(null, ingresarNumero, "Ingrese ID", JOptionPane.OK_CANCEL_OPTION, JOptionPane.QUESTION_MESSAGE, null, null, null);
+//                                        tecnico = ts.buscarTecnicoPorId(Long.valueOf(ingresarNumero.getNumero().trim())).get();
+//                                        datosContacto = tecnico.getDatosContacto();
+
+                            ingresarNumero = new IngresarNumero("Legajo:", tecnico.getLegajo().toString(), 60, 100, 100, true);
+                            valorRetornado = JOptionPane.showOptionDialog(null, ingresarNumero, "Ingrese Legajo", JOptionPane.OK_CANCEL_OPTION, JOptionPane.INFORMATION_MESSAGE, null, null, null);
 
                             if (JOptionPane.OK_OPTION == valorRetornado) {
 
-                                strID = ingresarNumero.getNumero().trim();
+                                strLegajo = ingresarNumero.getNumero().trim();
 
-                                if (!validarNumero(strID)) {
+                                if (!validarNumero(strLegajo)) {
 
-                                    JOptionPane.showMessageDialog(null, "Ingrese un Id Correcto.");
+                                    JOptionPane.showMessageDialog(null, "Ingrese un Legajo Correcto.");
 
-                                } else if (ts.buscarTecnicoPorId(Long.valueOf(ingresarNumero.getNumero().trim())).isEmpty()) {
+                                } else if (ts.buscarTecnicoPorLegajo(Long.valueOf(ingresarNumero.getNumero().trim())).isEmpty()) {
 
-                                    JOptionPane.showMessageDialog(null, "El Id ingresado no existe.");
+                                    JOptionPane.showMessageDialog(null, "El Legajo ingresado no existe.");
 
                                 } else {
 
                                     do {
 
-                                        tecnico = ts.buscarTecnicoPorId(Long.valueOf(ingresarNumero.getNumero().trim())).get();
+                                        tecnico = ts.buscarTecnicoPorLegajo(Long.valueOf(ingresarNumero.getNumero().trim())).get();
                                         datosContacto = tecnico.getDatosContacto();
 
-                                        ingresarNumero = new IngresarNumero("Legajo:", tecnico.getLegajo().toString(), 60, 60, 100);
-                                        valorRetornado = JOptionPane.showOptionDialog(null, ingresarNumero, "Ingrese Legajo", JOptionPane.OK_CANCEL_OPTION, JOptionPane.INFORMATION_MESSAGE, null, null, null);
+                                        ingresarTexto = new IngresarTexto("Nombre:", tecnico.getNombre(), 70, 150, 0);
+                                        valorRetornado = JOptionPane.showOptionDialog(null, ingresarTexto, "Ingrese Nombre", JOptionPane.OK_CANCEL_OPTION, JOptionPane.INFORMATION_MESSAGE, null, null, null);
 
                                         if (JOptionPane.OK_OPTION == valorRetornado) {
 
-                                            strLegajo = ingresarNumero.getNumero().trim();
+                                            nombre = ingresarTexto.getTexto().trim();
 
-                                            if (!validarNumero(strLegajo)) {
+                                            if (!validarNombre(nombre)) {
 
-                                                JOptionPane.showMessageDialog(null, "Ingrese un Legajo Correcto.");
+                                                JOptionPane.showMessageDialog(null, "Ingrese un Nombre Correcto.");
 
                                             } else {
 
                                                 do {
 
-                                                    ingresarTexto = new IngresarTexto("Nombre:", tecnico.getNombre(), 70, 100, 0);
-                                                    valorRetornado = JOptionPane.showOptionDialog(null, ingresarTexto, "Ingrese Nombre", JOptionPane.OK_CANCEL_OPTION, JOptionPane.INFORMATION_MESSAGE, null, null, null);
+                                                    ingresarTexto = new IngresarTexto("Apellido:", tecnico.getApellido(), 70, 150, 0);
+                                                    valorRetornado = JOptionPane.showOptionDialog(null, ingresarTexto, "Ingrese Apellido", JOptionPane.OK_CANCEL_OPTION, JOptionPane.INFORMATION_MESSAGE, null, null, null);
 
                                                     if (JOptionPane.OK_OPTION == valorRetornado) {
 
-                                                        nombre = ingresarTexto.getTexto().trim();
+                                                        apellido = ingresarTexto.getTexto().trim();
 
-                                                        if (!validarNombre(nombre)) {
+                                                        if (!validarNombre(apellido)) {
 
-                                                            JOptionPane.showMessageDialog(null, "Ingrese un Nombre Correcto.");
+                                                            JOptionPane.showMessageDialog(null, "Ingrese un Apellido Correcto.");
 
                                                         } else {
 
                                                             do {
 
-                                                                ingresarTexto = new IngresarTexto("Apellido:", tecnico.getApellido(), 70, 100, 0);
-                                                                valorRetornado = JOptionPane.showOptionDialog(null, ingresarTexto, "Ingrese Apellido", JOptionPane.OK_CANCEL_OPTION, JOptionPane.INFORMATION_MESSAGE, null, null, null);
+                                                                ingresarTexto = new IngresarTexto("Usuario:", tecnico.getUsuario(), 70, 150, 0);
+                                                                valorRetornado = JOptionPane.showOptionDialog(null, ingresarTexto, "Ingrese Usuario", JOptionPane.OK_CANCEL_OPTION, JOptionPane.INFORMATION_MESSAGE, null, null, null);
 
                                                                 if (JOptionPane.OK_OPTION == valorRetornado) {
 
-                                                                    apellido = ingresarTexto.getTexto().trim();
+                                                                    usuario = ingresarTexto.getTexto().trim();
 
-                                                                    if (!validarNombre(apellido)) {
+                                                                    if (!validarTexto1(usuario)) {
 
-                                                                        JOptionPane.showMessageDialog(null, "Ingrese un Apellido Correcto.");
+                                                                        JOptionPane.showMessageDialog(null, "Ingrese un Usuario Correcto.");
 
                                                                     } else {
 
                                                                         do {
 
-                                                                            ingresarTexto = new IngresarTexto("Usuario:", tecnico.getUsuario(), 70, 100, 0);
-                                                                            valorRetornado = JOptionPane.showOptionDialog(null, ingresarTexto, "Ingrese Usuario", JOptionPane.OK_CANCEL_OPTION, JOptionPane.INFORMATION_MESSAGE, null, null, null);
+                                                                            ingresarTexto = new IngresarTexto("Password:", tecnico.getPassword(), 70, 150, 0);
+                                                                            valorRetornado = JOptionPane.showOptionDialog(null, ingresarTexto, "Ingrese Password", JOptionPane.OK_CANCEL_OPTION, JOptionPane.INFORMATION_MESSAGE, null, null, null);
 
                                                                             if (JOptionPane.OK_OPTION == valorRetornado) {
 
-                                                                                usuario = ingresarTexto.getTexto().trim();
+                                                                                password = ingresarTexto.getTexto().trim();
 
-                                                                                if (!validarTexto1(usuario)) {
+                                                                                if (!validarTexto1(password)) {
 
-                                                                                    JOptionPane.showMessageDialog(null, "Ingrese un Usuario Correcto.");
+                                                                                    JOptionPane.showMessageDialog(null, "Ingrese un Password Correcto.");
 
                                                                                 } else {
 
                                                                                     do {
 
-                                                                                        ingresarTexto = new IngresarTexto("Password:", tecnico.getPassword(), 70, 100, 0);
-                                                                                        valorRetornado = JOptionPane.showOptionDialog(null, ingresarTexto, "Ingrese Password", JOptionPane.OK_CANCEL_OPTION, JOptionPane.INFORMATION_MESSAGE, null, null, null);
+                                                                                        ingresarNumero = new IngresarNumero("Telefono:", tecnico.getDatosContacto().getTelefono().toString(), 70, 100, 0, true);
+                                                                                        valorRetornado = JOptionPane.showOptionDialog(null, ingresarNumero, "Ingrese Telefono", JOptionPane.OK_CANCEL_OPTION, JOptionPane.INFORMATION_MESSAGE, null, null, null);
 
                                                                                         if (JOptionPane.OK_OPTION == valorRetornado) {
 
-                                                                                            password = ingresarTexto.getTexto().trim();
+                                                                                            strTelefono = ingresarNumero.getNumero().trim();
 
-                                                                                            if (!validarTexto1(password)) {
+                                                                                            if (!validarTelefono(strTelefono)) {
 
-                                                                                                JOptionPane.showMessageDialog(null, "Ingrese un Password Correcto.");
+                                                                                                JOptionPane.showMessageDialog(null, "Ingrese un Telefono Correcto.");
 
                                                                                             } else {
 
                                                                                                 do {
 
-                                                                                                    ingresarNumero = new IngresarNumero("Telefono:", tecnico.getDatosContacto().getTelefono().toString(), 70, 100, 0);
-                                                                                                    valorRetornado = JOptionPane.showOptionDialog(null, ingresarNumero, "Ingrese Telefono", JOptionPane.OK_CANCEL_OPTION, JOptionPane.INFORMATION_MESSAGE, null, null, null);
+                                                                                                    ingresarNumero = new IngresarNumero("Celular:", tecnico.getDatosContacto().getCelular().toString(), 70, 100, 0, true);
+                                                                                                    valorRetornado = JOptionPane.showOptionDialog(null, ingresarNumero, "Ingrese Celular", JOptionPane.OK_CANCEL_OPTION, JOptionPane.INFORMATION_MESSAGE, null, null, null);
 
                                                                                                     if (JOptionPane.OK_OPTION == valorRetornado) {
 
-                                                                                                        strTelefono = ingresarNumero.getNumero().trim();
+                                                                                                        strCelular = ingresarNumero.getNumero().trim();
 
-                                                                                                        if (!validarTelefono(strTelefono)) {
+                                                                                                        if (!validarTelefono(strCelular)) {
 
-                                                                                                            JOptionPane.showMessageDialog(null, "Ingrese un Telefono Correcto.");
+                                                                                                            JOptionPane.showMessageDialog(null, "Ingrese un Celular Correcto.");
 
                                                                                                         } else {
 
                                                                                                             do {
 
-                                                                                                                ingresarNumero = new IngresarNumero("Celular:", tecnico.getDatosContacto().getCelular().toString(), 70, 100, 0);
-                                                                                                                valorRetornado = JOptionPane.showOptionDialog(null, ingresarNumero, "Ingrese Celular", JOptionPane.OK_CANCEL_OPTION, JOptionPane.INFORMATION_MESSAGE, null, null, null);
+                                                                                                                ingresarTexto = new IngresarTexto("Email:", tecnico.getDatosContacto().getEmail(), 70, 250, 0);
+                                                                                                                valorRetornado = JOptionPane.showOptionDialog(null, ingresarTexto, "Ingrese Email", JOptionPane.OK_CANCEL_OPTION, JOptionPane.INFORMATION_MESSAGE, null, null, null);
 
                                                                                                                 if (JOptionPane.OK_OPTION == valorRetornado) {
 
-                                                                                                                    strCelular = ingresarNumero.getNumero().trim();
+                                                                                                                    email = ingresarTexto.getTexto().trim();
 
-                                                                                                                    if (!validarTelefono(strCelular)) {
+                                                                                                                    if (!validarEmail(email)) {
 
-                                                                                                                        JOptionPane.showMessageDialog(null, "Ingrese un Celular Correcto.");
+                                                                                                                        JOptionPane.showMessageDialog(null, "Ingrese un Email Correcto.");
 
                                                                                                                     } else {
 
-                                                                                                                        do
-                                                                                                                        {
+                                                                                                                        datosContacto.setTelefono(Long.valueOf(strTelefono));
+                                                                                                                        datosContacto.setCelular(Long.valueOf(strCelular));
+                                                                                                                        datosContacto.setEmail(email);
+                                                                                                                        tecnico.setLegajo(Integer.valueOf(strLegajo));
+                                                                                                                        tecnico.setNombre(nombre);
+                                                                                                                        tecnico.setApellido(apellido);
+                                                                                                                        tecnico.setUsuario(usuario);
+                                                                                                                        tecnico.setPassword(password);
+                                                                                                                        tecnico.setDatosContacto(datosContacto);
 
-                                                                                                                            ingresarTexto = new IngresarTexto("Email:", tecnico.getDatosContacto().getEmail(), 70, 150, 0);
-                                                                                                                            valorRetornado = JOptionPane.showOptionDialog(null, ingresarTexto, "Ingrese Email", JOptionPane.OK_CANCEL_OPTION, JOptionPane.INFORMATION_MESSAGE, null, null, null);
+                                                                                                                        valorRetornado = JOptionPane.showOptionDialog(null, "Desea recargar las Especialidades?", "Ingrese Especialidad", JOptionPane.OK_CANCEL_OPTION, JOptionPane.INFORMATION_MESSAGE, null, null, null);
 
-                                                                                                                            if (JOptionPane.OK_OPTION == valorRetornado) {
+                                                                                                                        if (JOptionPane.OK_OPTION == valorRetornado) {
 
-                                                                                                                                email = ingresarTexto.getTexto().trim();
+                                                                                                                            tecnico.getEspecialidades().clear();
 
-                                                                                                                                if (!validarEmail(email)) {
+                                                                                                                            do
+                                                                                                                            {
 
-                                                                                                                                    JOptionPane.showMessageDialog(null, "Ingrese un Email Correcto.");
+                                                                                                                                do
+                                                                                                                                {
 
-                                                                                                                                } else {
-
-                                                                                                                                    datosContacto.setTelefono(Long.valueOf(strTelefono));
-                                                                                                                                    datosContacto.setCelular(Long.valueOf(strCelular));
-                                                                                                                                    datosContacto.setEmail(email);
-                                                                                                                                    tecnico.setLegajo(Integer.valueOf(strLegajo));
-                                                                                                                                    tecnico.setNombre(nombre);
-                                                                                                                                    tecnico.setApellido(apellido);
-                                                                                                                                    tecnico.setUsuario(usuario);
-                                                                                                                                    tecnico.setPassword(password);
-                                                                                                                                    tecnico.setDatosContacto(datosContacto);
-
-                                                                                                                                    valorRetornado = JOptionPane.showOptionDialog(null, "Desea recargar las Especialidades", "Ingrese Especialidad", JOptionPane.OK_CANCEL_OPTION, JOptionPane.INFORMATION_MESSAGE, null, null, null);
+                                                                                                                                    ingresarEspecialidad = new IngresarEspecialidad(em);
+                                                                                                                                    valorRetornado = JOptionPane.showOptionDialog(null, ingresarEspecialidad, "Ingrese Especialidad", JOptionPane.OK_CANCEL_OPTION, JOptionPane.INFORMATION_MESSAGE, null, null, null);
 
                                                                                                                                     if (JOptionPane.OK_OPTION == valorRetornado) {
 
-                                                                                                                                        tecnico.getEspecialidades().clear();
-
-                                                                                                                                        do
-                                                                                                                                        {
-
-                                                                                                                                            do
-                                                                                                                                            {
-
-                                                                                                                                                ingresarEspecialidad = new IngresarEspecialidad();
-                                                                                                                                                valorRetornado = JOptionPane.showOptionDialog(null, ingresarEspecialidad, "Ingrese Especialidad", JOptionPane.OK_CANCEL_OPTION, JOptionPane.INFORMATION_MESSAGE, null, null, null);
-
-                                                                                                                                                if (JOptionPane.OK_OPTION == valorRetornado) {
-
-                                                                                                                                                    tecnico.addEspecialidad(especialidad);
-
-                                                                                                                                                }
-
-                                                                                                                                            } while (valorRetornado == JOptionPane.CLOSED_OPTION || (valorRetornado == JOptionPane.CANCEL_OPTION && tecnico.getEspecialidades().isEmpty()));
-
-                                                                                                                                            valorRetornado = JOptionPane.showOptionDialog(null, "Desea agregar otra especialidad", "Ingrese Especialidad", JOptionPane.OK_CANCEL_OPTION, JOptionPane.INFORMATION_MESSAGE, null, null, null);
-
-                                                                                                                                        } while (valorRetornado == JOptionPane.OK_OPTION);
+                                                                                                                                        tecnico.addEspecialidad(ingresarEspecialidad.getEspecialidad());
 
                                                                                                                                     }
 
-                                                                                                                                    ts.guardarTecnico(tecnico);
+                                                                                                                                } while (valorRetornado == JOptionPane.CLOSED_OPTION || (valorRetornado == JOptionPane.CANCEL_OPTION && tecnico.getEspecialidades().isEmpty() && ingresarEspecialidad.getCantidadElementosCombo() != 0));
 
-                                                                                                                                    JOptionPane.showMessageDialog(null, "El Técnico se ha modificado correctamente.");
+                                                                                                                                if (valorRetornado == JOptionPane.OK_OPTION && tecnico.getEspecialidades().size() > 0 && ingresarEspecialidad.getCantidadElementosCombo() != 0) {
 
-                                                                                                                                }
+                                                                                                                                    valorRetornado = JOptionPane.showOptionDialog(null, "Desea agregar otra especialidad?", "Ingrese Especialidad", JOptionPane.OK_CANCEL_OPTION, JOptionPane.INFORMATION_MESSAGE, null, null, null);
 
-                                                                                                                            }
+                                                                                                                                } else
+                                                                                                                                    valorRetornado = JOptionPane.CLOSED_OPTION;
 
-                                                                                                                        } while (!validarEmail(email) && (valorRetornado == JOptionPane.CLOSED_OPTION || valorRetornado == JOptionPane.OK_OPTION));
+                                                                                                                            } while (valorRetornado == JOptionPane.OK_OPTION);
+
+                                                                                                                        } else
+                                                                                                                            valorRetornado = JOptionPane.CLOSED_OPTION;
+
+                                                                                                                        if (valorRetornado != JOptionPane.CLOSED_OPTION)
+                                                                                                                            ts.guardarTecnico(tecnico);
 
                                                                                                                     }
 
                                                                                                                 }
 
-                                                                                                            } while (!validarTelefono(strCelular) && (valorRetornado == JOptionPane.CLOSED_OPTION || valorRetornado == JOptionPane.OK_OPTION));
+                                                                                                            } while (!validarEmail(email) && (valorRetornado == JOptionPane.CLOSED_OPTION || valorRetornado == JOptionPane.OK_OPTION));
 
                                                                                                         }
 
                                                                                                     }
 
-                                                                                                } while (!validarTelefono(strTelefono) && (valorRetornado == JOptionPane.CLOSED_OPTION || valorRetornado == JOptionPane.OK_OPTION));
+                                                                                                } while (!validarTelefono(strCelular) && (valorRetornado == JOptionPane.CLOSED_OPTION || valorRetornado == JOptionPane.OK_OPTION));
 
                                                                                             }
 
                                                                                         }
 
-                                                                                    } while (!validarTexto1(password) && (valorRetornado == JOptionPane.CLOSED_OPTION || valorRetornado == JOptionPane.OK_OPTION));
+                                                                                    } while (!validarTelefono(strTelefono) && (valorRetornado == JOptionPane.CLOSED_OPTION || valorRetornado == JOptionPane.OK_OPTION));
 
                                                                                 }
 
                                                                             }
 
-                                                                        } while (!validarTexto1(usuario) && (valorRetornado == JOptionPane.CLOSED_OPTION || valorRetornado == JOptionPane.OK_OPTION));
+                                                                        } while (!validarTexto1(password) && (valorRetornado == JOptionPane.CLOSED_OPTION || valorRetornado == JOptionPane.OK_OPTION));
 
                                                                     }
 
                                                                 }
 
-                                                            } while (!validarNombre(apellido) && (valorRetornado == JOptionPane.CLOSED_OPTION || valorRetornado == JOptionPane.OK_OPTION));
+                                                            } while (!validarTexto1(usuario) && (valorRetornado == JOptionPane.CLOSED_OPTION || valorRetornado == JOptionPane.OK_OPTION));
 
                                                         }
 
                                                     }
 
-                                                } while (!validarNombre(nombre) && (valorRetornado == JOptionPane.CLOSED_OPTION || valorRetornado == JOptionPane.OK_OPTION));
+                                                } while (!validarNombre(apellido) && (valorRetornado == JOptionPane.CLOSED_OPTION || valorRetornado == JOptionPane.OK_OPTION));
 
                                             }
 
                                         }
 
-                                    } while (!validarNumero(strLegajo) && (valorRetornado == JOptionPane.CLOSED_OPTION || valorRetornado == JOptionPane.OK_OPTION));
+                                    } while (!validarNombre(nombre) && (valorRetornado == JOptionPane.CLOSED_OPTION || valorRetornado == JOptionPane.OK_OPTION));
 
                                 }
 
                             }
 
-                        } while (!validarNumero(strID) && (valorRetornado == JOptionPane.CLOSED_OPTION || valorRetornado == JOptionPane.OK_OPTION));
+                        } while (!validarNumero(strLegajo) && (valorRetornado == JOptionPane.CLOSED_OPTION || valorRetornado == JOptionPane.OK_OPTION));
+//
+//                                }
+//
+//                            }
+//
+//                        } while (!validarNumero(strID) && (valorRetornado == JOptionPane.CLOSED_OPTION || valorRetornado == JOptionPane.OK_OPTION));
 
                         valorRetornado = JOptionPane.CANCEL_OPTION;
 
                     }
                     case "3" -> {
 
-                        strID = "";
+//                        strID = "";
+                        strLegajo = "";
 
                         do {
 
-                            ingresarNumero = new IngresarNumero("ID:", "0", 20, 50, 150);
-                            valorRetornado = JOptionPane.showOptionDialog(null, ingresarNumero, "Ingrese ID", JOptionPane.OK_CANCEL_OPTION, JOptionPane.QUESTION_MESSAGE, null, null, null);
+                            ingresarNumero = new IngresarNumero("Legajo:", "0", 60, 100, 100, true);
+                            valorRetornado = JOptionPane.showOptionDialog(null, ingresarNumero, "Ingrese Legajo", JOptionPane.OK_CANCEL_OPTION, JOptionPane.QUESTION_MESSAGE, null, null, null);
 
                             if (JOptionPane.OK_OPTION == valorRetornado) {
 
-                                strID = ingresarNumero.getNumero().trim();
+                                strLegajo = ingresarNumero.getNumero().trim();
 
-                                if (!validarNumero(strID)) {
+                                if (!validarNumero(strLegajo)) {
 
-                                    JOptionPane.showMessageDialog(null, "Ingrese un Id Correcto.");
+                                    JOptionPane.showMessageDialog(null, "Ingrese un Legajo Correcto.");
 
-                                } else if (ts.buscarTecnicoPorId(Long.valueOf(ingresarNumero.getNumero().trim())).isEmpty()) {
+                                } else if (ts.buscarTecnicoPorLegajo(Long.valueOf(ingresarNumero.getNumero().trim())).isEmpty()) {
 
-                                    JOptionPane.showMessageDialog(null, "El Id ingresado no existe.");
+                                    JOptionPane.showMessageDialog(null, "El Legajo ingresado no existe.");
 
                                 } else {
 
-                                    tecnico = ts.buscarTecnicoPorId(Long.valueOf(ingresarNumero.getNumero().trim())).get();
+                                    tecnico = ts.buscarTecnicoPorLegajo(Long.valueOf(ingresarNumero.getNumero().trim())).get();
                                     ts.eliminarTecnico(tecnico.getId());
-
-                                    JOptionPane.showMessageDialog(null, "El Operador Mesa Ayuda se ha eliminado correctamente.");
 
                                 }
 
                             }
 
-                        } while (!validarNumero(strID) && (valorRetornado == JOptionPane.CLOSED_OPTION || valorRetornado == JOptionPane.OK_OPTION));
+                        } while (!validarNumero(strLegajo) && (valorRetornado == JOptionPane.CLOSED_OPTION || valorRetornado == JOptionPane.OK_OPTION));
 
                         valorRetornado = JOptionPane.CANCEL_OPTION;
 
                     }
 
-                    case "4" ->
+                    case "4" -> {
+                        mostrarTecnicos = new MostrarTecnicos(em);
+                        JOptionPane.showOptionDialog(null, mostrarTecnicos, "Listado Técnicos", JOptionPane.OK_OPTION, JOptionPane.INFORMATION_MESSAGE, null, new Object[]{"Aceptar"}, "Aceptar");
+
+                        valorRetornado = JOptionPane.CANCEL_OPTION;
+                    }
+
+                    case "5" ->
                             valorRetornado = JOptionPane.showOptionDialog(null, "Está seguro que desea salir?", "Salir",
                                     JOptionPane.OK_CANCEL_OPTION, JOptionPane.QUESTION_MESSAGE, null, null, null);
 
@@ -595,112 +628,10 @@ public class TecnicoForm {
 
         } while (valorRetornado != JOptionPane.OK_OPTION || !validarMenuOpcion(opcionMenu));
 
-
-    }
-
-    private class IngresarTexto extends JPanel {
-
-        private JTextField textoField;
-
-        public IngresarTexto(String textLabel, String textField, int longLabel, int longField, int gap) {
-
-            setLayout(new MigLayout("wrap,fillx,insets 5 10 5 10", "[fill,50]"));
-
-            JLabel textoLabel = new JLabel(textLabel);
-            textoField = new JTextField();
-
-            textoField.setText(textField);
-
-            add(textoLabel, "split 2, width " + longLabel + ":" + longLabel + ":" + longLabel + ", growx");
-            add(textoField, "width " + longField + ":" + longField + ":" + longField + ", pushx, gapright " + gap);
-
-        }
-
-        public String getTexto() {
-
-            return textoField.getText();
-
-        }
-
-    }
-
-    private class IngresarNumero extends JPanel {
-
-        private JTextField numeroField;
-
-        public IngresarNumero(String numLabel, String textField, int longLabel, int longField, int gap) {
-
-            setLayout(new MigLayout("wrap,fillx,insets 5 10 5 10", "[fill,50]"));
-
-            JLabel numeroLabel = new JLabel(numLabel);
-            numeroField = new JTextField();
-
-            numeroField.setHorizontalAlignment(SwingConstants.RIGHT);
-            numeroField.setText(textField);
-
-            add(numeroLabel, "split 2, width " + longLabel + ":" + longLabel + ":" + longLabel + ", growx");
-            add(numeroField, "width " + longField + ":" + longField + ":" + longField + ", pushx, gapright " + gap);
-
-        }
-
-        public String getNumero() {
-
-            return numeroField.getText();
-
-        }
-
-    }
-
-    private class IngresarEspecialidad extends JPanel {
-
-        private JComboBox comboField;
-
-        public IngresarEspecialidad() {
-
-            setLayout(new MigLayout("wrap,fillx,insets 5 10 5 10", "[fill,50]"));
-
-            JLabel textoLabel = new JLabel("Especialidad:");
-            comboField = new JComboBox();
-
-            add(textoLabel, "split 2, width 90:90:90, growx");
-            add(comboField, "width 150:150:150, pushx, gapright 0");
-
-            comboField.addItemListener(new ItemListener() {
-
-                @Override
-                public void itemStateChanged(ItemEvent e) {
-
-                    if (e.getStateChange() == ItemEvent.SELECTED) {
-
-                        especialidad = (Especialidad) comboField.getSelectedItem();
-
-                    }
-                }
-            });
-
-            getEspecialidad();
-
-        }
-
-        private void getEspecialidad() {
-
-            comboField.removeAllItems();
-
-            es.listarEspecialidades().forEach(esp -> comboField.addItem(esp));
-
-            if (comboField.getItemCount() > 0) {
-
-                especialidad = (Especialidad) comboField.getSelectedItem();
-
-            }
-
-        }
-
-
     }
 
     private boolean validarMenuOpcion(String args) {
-        return args.matches("^[1-4]$");
+        return args.matches("^[1-5]$");
     }
 
     private boolean validarNumero(String numero) {

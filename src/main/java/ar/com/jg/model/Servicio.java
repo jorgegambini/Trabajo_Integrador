@@ -2,7 +2,6 @@ package ar.com.jg.model;
 
 import jakarta.persistence.*;
 import lombok.*;
-
 import javax.swing.*;
 import java.util.ArrayList;
 import java.util.List;
@@ -13,7 +12,6 @@ import java.util.List;
 @AttributeOverride(name = "id", column = @Column(name = "id_servicio"))
 //@NoArgsConstructor @RequiredArgsConstructor
 @Getter @Setter
-@ToString(callSuper = true, includeFieldNames = false, exclude = {"clientes"})
 @EqualsAndHashCode(callSuper = true)
 public class Servicio extends EntidadId{
 
@@ -27,7 +25,8 @@ public class Servicio extends EntidadId{
     @OneToMany(mappedBy = "servicio", cascade = CascadeType.ALL, orphanRemoval = true, fetch = FetchType.LAZY)
     @EqualsAndHashCode.Exclude
     private List<ReporteIncidencia> reportesIncidencia;
-    @OneToMany(mappedBy = "servicio", fetch = FetchType.LAZY, cascade = CascadeType.ALL, orphanRemoval = true)//
+    @OneToMany(fetch = FetchType.LAZY, cascade = {CascadeType.PERSIST, CascadeType.MERGE})//mappedBy = "servicio", , orphanRemoval = true
+    @JoinTable(name = "servicios_especialidades", joinColumns = @JoinColumn(name = "id_servicio"), inverseJoinColumns = @JoinColumn(name = "id_especialidad"), uniqueConstraints = @UniqueConstraint(columnNames = {"id_servicio", "id_especialidad"}))
     @EqualsAndHashCode.Exclude
     private List<Especialidad> especialidades;
 
@@ -64,10 +63,13 @@ public class Servicio extends EntidadId{
 
     public Servicio addEspecialidad(Especialidad especialidad){
 
+        System.out.println(especialidad);
+        System.out.println(this.especialidades);
+
         if(!this.especialidades.contains(especialidad)) {
 
             this.especialidades.add(especialidad);
-            especialidad.setServicio(this);
+            //especialidad.setServicio(this);
 
         }else{
 
@@ -84,7 +86,7 @@ public class Servicio extends EntidadId{
         if(this.especialidades.contains(especialidad)) {
 
             this.especialidades.remove(especialidad);
-            especialidad.setServicio(null);
+            //especialidad.setServicio(null);
 
         }else{
 
@@ -93,6 +95,11 @@ public class Servicio extends EntidadId{
         }
         return this;
 
+    }
+
+    @Override
+    public String toString() {
+        return this.denominacion;
     }
 
 }

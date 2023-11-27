@@ -1,12 +1,14 @@
 package ar.com.jg.services;
 
 import ar.com.jg.model.OperadorMesaAyuda;
-import ar.com.jg.repositories.OperadorMesaAyudaRepository;
 import ar.com.jg.repositories.CrudRepository;
+import ar.com.jg.repositories.OperadorMesaAyudaRepository;
 import jakarta.persistence.EntityManager;
 
+import javax.swing.*;
 import java.util.List;
 import java.util.Optional;
+
 
 public class OperadorMesaAyudaServiceImpl implements OperadorMesaAyudaService{
 
@@ -34,6 +36,13 @@ public class OperadorMesaAyudaServiceImpl implements OperadorMesaAyudaService{
 
     }
 
+    @Override
+    public Optional<OperadorMesaAyuda> buscarOperadorMesaAyudaPorLegajo(Long legajo) {
+
+        return Optional.ofNullable(((OperadorMesaAyudaRepository) or).buscarPorLegajo(legajo));
+
+    }
+
     public Optional<OperadorMesaAyuda> loginOperadorMesaAyuda(String user, String pass) {
 
         return Optional.ofNullable(((OperadorMesaAyudaRepository)or).login(user, pass));
@@ -52,7 +61,7 @@ public class OperadorMesaAyudaServiceImpl implements OperadorMesaAyudaService{
         }catch (Exception ex){
 
             em.getTransaction().rollback();
-            ex.printStackTrace(System.out);
+            JOptionPane.showMessageDialog(null, ex.getMessage());
 
         }
 
@@ -67,12 +76,15 @@ public class OperadorMesaAyudaServiceImpl implements OperadorMesaAyudaService{
             or.eliminar(id);
             em.getTransaction().commit();
 
+            JOptionPane.showMessageDialog(null, "El Operador se ha eliminado correctamente.");
+
         }catch (Exception ex){
 
             em.getTransaction().rollback();
-            ex.printStackTrace(System.out);
+            JOptionPane.showMessageDialog(null, ex.getMessage());
 
         }
 
     }
+
 }

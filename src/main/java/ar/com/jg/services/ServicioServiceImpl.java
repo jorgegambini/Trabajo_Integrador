@@ -4,9 +4,10 @@ import ar.com.jg.model.Servicio;
 import ar.com.jg.repositories.ServicioRepository;
 import ar.com.jg.repositories.CrudRepository;
 import jakarta.persistence.EntityManager;
-
+import javax.swing.*;
 import java.util.List;
 import java.util.Optional;
+
 
 public class ServicioServiceImpl implements ServicioService{
 
@@ -46,7 +47,7 @@ public class ServicioServiceImpl implements ServicioService{
         }catch (Exception ex){
 
             em.getTransaction().rollback();
-            ex.printStackTrace(System.out);
+            JOptionPane.showMessageDialog(null, ex.getMessage());
 
         }
 
@@ -61,12 +62,15 @@ public class ServicioServiceImpl implements ServicioService{
             sr.eliminar(id);
             em.getTransaction().commit();
 
+            JOptionPane.showMessageDialog(null, "El Servicio se ha eliminado correctamente.");
+
         }catch (Exception ex){
 
             em.getTransaction().rollback();
-            ex.printStackTrace(System.out);
+            JOptionPane.showMessageDialog(null, ex.getMessage());
 
         }
 
     }
+
 }

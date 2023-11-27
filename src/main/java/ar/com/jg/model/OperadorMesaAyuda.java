@@ -2,7 +2,6 @@ package ar.com.jg.model;
 
 import jakarta.persistence.*;
 import lombok.*;
-
 import java.util.ArrayList;
 import java.util.List;
 
@@ -12,7 +11,7 @@ import java.util.List;
 @AttributeOverride(name = "id", column = @Column(name = "id_operador_mesa_ayuda"))
 //@NoArgsConstructor
 @Getter @Setter
-@ToString(callSuper = true)
+//@ToString(callSuper = true)
 @EqualsAndHashCode(callSuper = true)
 public class OperadorMesaAyuda extends Empleado {
 
@@ -50,6 +49,13 @@ public class OperadorMesaAyuda extends Empleado {
         this.reportesIncidencia.remove(reporte);
         reporte.setOperador(null);
         return this;
+
+    }
+
+    @Override
+    public String toString() {
+
+        return nombre + ", " + apellido;
 
     }
 

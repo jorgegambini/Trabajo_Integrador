@@ -15,7 +15,7 @@
             <property name="jakarta.persistence.jdbc.user" value="root"/>
             <property name="jakarta.persistence.jdbc.password" value="@270Jorge571"/>
             <property name="jakarta.persistence.jdbc.driver" value="com.mysql.cj.jdbc.Driver"/>
-            <property name="jakarta.persistence.schema-generation.database.action" value="drop-and-create"/>  <!---drop-and-create/create/drop/none-->
+            <property name="jakarta.persistence.schema-generation.database.action" value="none"/>  <!---drop-and-create/create/drop/none-->
             <property name="hibernate.dialect" value="org.hibernate.dialect.MySQL8Dialect"/>
             <property name="hibernate.show_sql" value="true"/>
             <!---<property name="hibernate.hbm2ddl.auto" value="create-drop"/>-->

@@ -1,9 +1,8 @@
 package ar.com.jg.view;
 
+import ar.com.jg.utility.RequestFocusListener;
 import net.miginfocom.swing.MigLayout;
-
 import javax.swing.*;
-import java.awt.*;
 
 
 public class LoginForm extends JPanel {
@@ -24,6 +23,8 @@ public class LoginForm extends JPanel {
         add(nameField,"width 150:150:150, pushx");
         add(passwordLabel,"split 2, width 70:70:70, growx");
         add(passwordField,"width 150:150:150,pushx");
+
+        nameField.addAncestorListener( new RequestFocusListener());
 
     }
 

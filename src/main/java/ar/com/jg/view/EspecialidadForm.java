@@ -3,8 +3,8 @@ package ar.com.jg.view;
 import ar.com.jg.model.Especialidad;
 import ar.com.jg.services.EspecialidadService;
 import ar.com.jg.services.EspecialidadServiceImpl;
+import ar.com.jg.view.accessories.*;
 import jakarta.persistence.EntityManager;
-import net.miginfocom.swing.MigLayout;
 import javax.swing.*;
 
 
@@ -14,6 +14,7 @@ public class EspecialidadForm {
 
     private IngresarTexto ingresarTexto;
     private IngresarNumero ingresarNumero;
+    private MostrarEspecialidades mostrarEspecialidades;
 
     private int valorRetornado;
     private String opcionMenu;
@@ -21,11 +22,14 @@ public class EspecialidadForm {
     private String denominacion;
 
     private EspecialidadService es;
-    Especialidad especialidad;
+    private Especialidad especialidad;
+
+    private EntityManager em;
 
     public EspecialidadForm(EntityManager em) {
 
         es = new EspecialidadServiceImpl(em);
+        this.em = em;
 
         init();
 
@@ -39,11 +43,12 @@ public class EspecialidadForm {
                 1 - INGRESAR UNA ESPECIALIDAD.<br>
                 2 - EDITAR UNA ESPECIALIDAD.<br>
                 3 - ELIMINAR UNA ESPECIALIDAD.<br>
-                4 - SALIR.<br><br></html>""";
+                4 - LISTAR ESPECIALIDADES.<br>
+                5 - SALIR.<br><br></html>""";
 
         do {
 
-            menuForm = new MenuForm(menuEspecialidad,250,50);
+            menuForm = new MenuForm(menuEspecialidad, 250, 50, 5);
             valorRetornado = JOptionPane.showOptionDialog(null, menuForm, "Seleccione una Opcion", JOptionPane.OK_OPTION, JOptionPane.INFORMATION_MESSAGE, null, new Object[]{"Aceptar"}, "Aceptar");
 
             if (JOptionPane.OK_OPTION == valorRetornado) {
@@ -58,9 +63,9 @@ public class EspecialidadForm {
 
                         denominacion = "";
 
-                        do{
+                        do {
 
-                            ingresarTexto = new IngresarTexto("Denominación", "",90,100,0);
+                            ingresarTexto = new IngresarTexto("Denominación", "", 90, 200, 0);
                             valorRetornado = JOptionPane.showOptionDialog(null, ingresarTexto, "Ingrese Denominacion", JOptionPane.OK_CANCEL_OPTION, JOptionPane.INFORMATION_MESSAGE, null, null, null);
 
                             if (JOptionPane.OK_OPTION == valorRetornado) {
@@ -71,19 +76,17 @@ public class EspecialidadForm {
 
                                     JOptionPane.showMessageDialog(null, "Ingrese una Denominación Correcta.");
 
-                                }else {
+                                } else {
 
                                     especialidad = new Especialidad();
                                     especialidad.setDenominacion(denominacion);
                                     es.guardarEspecialidad(especialidad);
 
-                                    JOptionPane.showMessageDialog(null, "La Especialidad se ha ingresado correctamente.");
-
                                 }
 
                             }
 
-                        }while (!validarDenominacion(denominacion) && (valorRetornado == JOptionPane.CLOSED_OPTION || valorRetornado == JOptionPane.OK_OPTION));
+                        } while (!validarDenominacion(denominacion) && (valorRetornado == JOptionPane.CLOSED_OPTION || valorRetornado == JOptionPane.OK_OPTION));
 
                         valorRetornado = JOptionPane.CANCEL_OPTION;
 
@@ -94,9 +97,9 @@ public class EspecialidadForm {
                         strID = "";
                         denominacion = "";
 
-                        do{
+                        do {
 
-                            ingresarNumero = new IngresarNumero("ID:", "0", 20, 50,150);
+                            ingresarNumero = new IngresarNumero("ID:", "0", 20, 70, 130, true);
                             valorRetornado = JOptionPane.showOptionDialog(null, ingresarNumero, "Ingrese ID", JOptionPane.OK_CANCEL_OPTION, JOptionPane.QUESTION_MESSAGE, null, null, null);
 
                             if (JOptionPane.OK_OPTION == valorRetornado) {
@@ -107,17 +110,17 @@ public class EspecialidadForm {
 
                                     JOptionPane.showMessageDialog(null, "Ingrese un Id Correcto.");
 
-                                }else if(es.buscarEspecialidadPorId(Long.valueOf(ingresarNumero.getNumero().trim())).isEmpty()){
+                                } else if (es.buscarEspecialidadPorId(Long.valueOf(ingresarNumero.getNumero().trim())).isEmpty()) {
 
                                     JOptionPane.showMessageDialog(null, "El Id ingresado no existe.");
 
-                                }else{
+                                } else {
 
                                     do {
 
                                         especialidad = es.buscarEspecialidadPorId(Long.valueOf(ingresarNumero.getNumero().trim())).get();
 
-                                        ingresarTexto = new IngresarTexto("Denominación", especialidad.getDenominacion(), 90, 100,0);
+                                        ingresarTexto = new IngresarTexto("Denominación", especialidad.getDenominacion(), 90, 200, 0);
                                         valorRetornado = JOptionPane.showOptionDialog(null, ingresarTexto, "Ingrese Denominacion", JOptionPane.OK_CANCEL_OPTION, JOptionPane.INFORMATION_MESSAGE, null, null, null);
 
                                         if (JOptionPane.OK_OPTION == valorRetornado) {
@@ -133,19 +136,17 @@ public class EspecialidadForm {
                                                 especialidad.setDenominacion(denominacion);
                                                 es.guardarEspecialidad(especialidad);
 
-                                                JOptionPane.showMessageDialog(null, "La Especialidad se ha modificado correctamente.");
-
                                             }
 
                                         }
 
-                                    }while (!validarDenominacion(denominacion) && (valorRetornado == JOptionPane.CLOSED_OPTION || valorRetornado == JOptionPane.OK_OPTION));
+                                    } while (!validarDenominacion(denominacion) && (valorRetornado == JOptionPane.CLOSED_OPTION || valorRetornado == JOptionPane.OK_OPTION));
 
                                 }
 
                             }
 
-                        }while (!validarId(strID) && (valorRetornado == JOptionPane.CLOSED_OPTION || valorRetornado == JOptionPane.OK_OPTION));
+                        } while (!validarId(strID) && (valorRetornado == JOptionPane.CLOSED_OPTION || valorRetornado == JOptionPane.OK_OPTION));
 
                         valorRetornado = JOptionPane.CANCEL_OPTION;
 
@@ -154,9 +155,9 @@ public class EspecialidadForm {
 
                         strID = "";
 
-                        do{
+                        do {
 
-                            ingresarNumero = new IngresarNumero("ID:", "0", 20, 50,150);
+                            ingresarNumero = new IngresarNumero("ID:", "0", 20, 70, 130, true);
                             valorRetornado = JOptionPane.showOptionDialog(null, ingresarNumero, "Ingrese ID", JOptionPane.OK_CANCEL_OPTION, JOptionPane.QUESTION_MESSAGE, null, null, null);
 
                             if (JOptionPane.OK_OPTION == valorRetornado) {
@@ -167,28 +168,33 @@ public class EspecialidadForm {
 
                                     JOptionPane.showMessageDialog(null, "Ingrese un Id Correcto.");
 
-                                }else if(es.buscarEspecialidadPorId(Long.valueOf(ingresarNumero.getNumero().trim())).isEmpty()){
+                                } else if (es.buscarEspecialidadPorId(Long.valueOf(ingresarNumero.getNumero().trim())).isEmpty()) {
 
                                     JOptionPane.showMessageDialog(null, "El Id ingresado no existe.");
 
-                                }else{
+                                } else {
 
                                     especialidad = es.buscarEspecialidadPorId(Long.valueOf(ingresarNumero.getNumero().trim())).get();
                                     es.eliminarEspecialidad(especialidad.getId());
-
-                                    JOptionPane.showMessageDialog(null, "La Especialidad se ha eliminado correctamente.");
 
                                 }
 
                             }
 
-                        }while (!validarId(strID) && (valorRetornado == JOptionPane.CLOSED_OPTION || valorRetornado == JOptionPane.OK_OPTION));
+                        } while (!validarId(strID) && (valorRetornado == JOptionPane.CLOSED_OPTION || valorRetornado == JOptionPane.OK_OPTION));
 
                         valorRetornado = JOptionPane.CANCEL_OPTION;
 
                     }
 
-                    case "4" ->
+                    case "4" -> {
+                        mostrarEspecialidades = new MostrarEspecialidades(em);
+                        JOptionPane.showOptionDialog(null, mostrarEspecialidades, "Listado Especialidades", JOptionPane.OK_OPTION, JOptionPane.INFORMATION_MESSAGE, null, new Object[]{"Aceptar"}, "Aceptar");
+
+                        valorRetornado = JOptionPane.CANCEL_OPTION;
+                    }
+
+                    case "5" ->
                             valorRetornado = JOptionPane.showOptionDialog(null, "Está seguro que desea salir?", "Salir",
                                     JOptionPane.OK_CANCEL_OPTION, JOptionPane.QUESTION_MESSAGE, null, null, null);
 
@@ -201,61 +207,8 @@ public class EspecialidadForm {
 
     }
 
-    private class IngresarTexto extends JPanel{
-
-        private JTextField textoField;
-
-        public IngresarTexto(String textLabel, String textField, int longLabel, int longField, int gap){
-
-            setLayout(new MigLayout("wrap,fillx,insets 5 10 5 10", "[fill,50]"));
-
-            JLabel textoLabel = new JLabel(textLabel);
-            textoField = new JTextField();
-
-            textoField.setText(textField);
-
-            add(textoLabel, "split 2, width " + longLabel + ":" + longLabel + ":"+ longLabel + ", growx");
-            add(textoField, "width " + longField + ":" + longField + ":"+ longField + ", pushx, gapright " + gap);
-
-        }
-
-        public String getTexto() {
-
-            return textoField.getText();
-
-        }
-
-    }
-
-    private class IngresarNumero extends JPanel{
-
-        private JTextField numeroField;
-
-        public IngresarNumero(String numLabel, String textField, int longLabel, int longField, int gap){
-
-            setLayout(new MigLayout("wrap,fillx,insets 5 10 5 10", "[fill,50]"));
-
-            JLabel numeroLabel = new JLabel(numLabel);
-            numeroField = new JTextField();
-
-            numeroField.setHorizontalAlignment(SwingConstants.RIGHT);
-            numeroField.setText(textField);
-
-            add(numeroLabel, "split 2, width " + longLabel + ":" + longLabel + ":"+ longLabel + ", growx");
-            add(numeroField, "width " + longField + ":" + longField + ":"+ longField + ", pushx, gapright " + gap);
-
-        }
-
-        public String getNumero() {
-
-            return numeroField.getText();
-
-        }
-
-    }
-
     private boolean validarMenuOpcion(String args) {
-        return args.matches("^[1-4]$");
+        return args.matches("^[1-5]$");
     }
 
     private boolean validarId(String id) {

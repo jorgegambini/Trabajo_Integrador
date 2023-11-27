@@ -2,8 +2,9 @@ package ar.com.jg.repositories;
 
 import ar.com.jg.model.Servicio;
 import jakarta.persistence.EntityManager;
-
+import javax.swing.*;
 import java.util.List;
+
 
 public class ServicioRepository implements CrudRepository<Servicio>{
 
@@ -34,9 +35,13 @@ public class ServicioRepository implements CrudRepository<Servicio>{
 
             em.merge(servicio);
 
+            JOptionPane.showMessageDialog(null, "El Servicio se ha modificado correctamente.");
+
         }else{
 
             em.persist(servicio);
+
+            JOptionPane.showMessageDialog(null, "El Servicio se ha ingresado correctamente.");
 
         }
 

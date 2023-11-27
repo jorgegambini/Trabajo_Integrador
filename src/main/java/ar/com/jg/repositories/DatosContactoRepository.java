@@ -2,7 +2,7 @@ package ar.com.jg.repositories;
 
 import ar.com.jg.model.DatosContacto;
 import jakarta.persistence.EntityManager;
-import jakarta.persistence.NoResultException;
+
 
 import java.util.List;
 

@@ -2,7 +2,6 @@ package ar.com.jg.model;
 
 import jakarta.persistence.*;
 import lombok.*;
-
 import java.util.ArrayList;
 import java.util.List;
 
@@ -19,10 +18,10 @@ public class Especialidad extends EntidadId{
     @NonNull
     @EqualsAndHashCode.Exclude
     private String denominacion;
-    @ManyToOne
-    @JoinColumn(name = "id_servicio")
-    @EqualsAndHashCode.Exclude
-    private Servicio servicio; //Many2One
+//    @ManyToOne
+//    @JoinColumn(name = "id_servicio")
+//    @EqualsAndHashCode.Exclude
+//    private Servicio servicio; //Many2One
     @ManyToMany(mappedBy = "especialidades")
     @EqualsAndHashCode.Exclude
     private List<Tecnico> tecnicos; //Many2Many

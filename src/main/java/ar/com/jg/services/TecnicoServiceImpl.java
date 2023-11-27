@@ -1,14 +1,14 @@
 package ar.com.jg.services;
 
-import ar.com.jg.model.OperadorMesaAyuda;
 import ar.com.jg.model.Tecnico;
-import ar.com.jg.repositories.OperadorMesaAyudaRepository;
-import ar.com.jg.repositories.TecnicoRepository;
 import ar.com.jg.repositories.CrudRepository;
+import ar.com.jg.repositories.TecnicoRepository;
 import jakarta.persistence.EntityManager;
 
+import javax.swing.*;
 import java.util.List;
 import java.util.Optional;
+
 
 public class TecnicoServiceImpl implements TecnicoService{
 
@@ -36,6 +36,13 @@ public class TecnicoServiceImpl implements TecnicoService{
 
     }
 
+    @Override
+    public Optional<Tecnico> buscarTecnicoPorLegajo(Long legajo) {
+
+        return Optional.ofNullable(((TecnicoRepository) tr).buscarPorLegajo(legajo));
+
+    }
+
     public Optional<Tecnico> loginTecnico(String user, String pass) {
 
         return Optional.ofNullable(((TecnicoRepository)tr).login(user, pass));
@@ -54,7 +61,7 @@ public class TecnicoServiceImpl implements TecnicoService{
         }catch (Exception ex){
 
             em.getTransaction().rollback();
-            ex.printStackTrace(System.out);
+            JOptionPane.showMessageDialog(null, ex.getMessage());
 
         }
 
@@ -69,12 +76,15 @@ public class TecnicoServiceImpl implements TecnicoService{
             tr.eliminar(id);
             em.getTransaction().commit();
 
+            JOptionPane.showMessageDialog(null, "El Técnico se ha eliminado correctamente");
+
         }catch (Exception ex){
 
             em.getTransaction().rollback();
-            ex.printStackTrace(System.out);
+            JOptionPane.showMessageDialog(null, ex.getMessage());
 
         }
 
     }
+
 }

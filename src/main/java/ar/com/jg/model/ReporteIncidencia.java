@@ -4,6 +4,7 @@ import ar.com.jg.model.enums.EstadoProblema;
 import ar.com.jg.model.enums.TipoProblema;
 import jakarta.persistence.*;
 import lombok.*;
+
 import java.time.LocalDate;
 
 
@@ -22,19 +23,10 @@ public class ReporteIncidencia extends EntidadId{
     @NonNull
     @EqualsAndHashCode.Exclude
     private LocalDate fechaAlta;
-    @Column(name = "descripcion_problema", nullable = false)
+    @Column(name = "codigo_reporte", nullable = false)
     @NonNull
     @EqualsAndHashCode.Exclude
-    private String descripcionProblema;
-    @Column(name = "tipo_problema", nullable = false)
-    @Enumerated(EnumType.STRING)
-    @NonNull
-    @EqualsAndHashCode.Exclude
-    private TipoProblema tipoProblema; //Basico, Intermedio, Complejo
-    @ManyToOne
-    @JoinColumn(name = "id_servicio", nullable = false)
-    @EqualsAndHashCode.Exclude
-    private Servicio servicio; //Many2One
+    private String codigoReporte;
     @ManyToOne
     @JoinColumn(name = "id_operador_mesa_ayuda", nullable = false)
     @EqualsAndHashCode.Exclude
@@ -44,9 +36,22 @@ public class ReporteIncidencia extends EntidadId{
     @EqualsAndHashCode.Exclude
     private Cliente cliente; //Many2One
     @ManyToOne
+    @JoinColumn(name = "id_servicio", nullable = false)
+    @EqualsAndHashCode.Exclude
+    private Servicio servicio; //Many2One
+    @ManyToOne
     @JoinColumn(name = "id_tecnico", nullable = false)
     @EqualsAndHashCode.Exclude
     private Tecnico tecnico; //Many2One
+    @Column(name = "tipo_problema", nullable = false)
+    @Enumerated(EnumType.STRING)
+    @NonNull
+    @EqualsAndHashCode.Exclude
+    private TipoProblema tipoProblema; //Basico, Intermedio, Complejo
+    @Column(name = "descripcion_problema", nullable = false)
+    @NonNull
+    @EqualsAndHashCode.Exclude
+    private String descripcionProblema;
     @Column(name = "tiempo_estimado_resolucion")//, nullable = false
     @EqualsAndHashCode.Exclude
     private Integer tiempoEstimadoResolucion; //en minutos

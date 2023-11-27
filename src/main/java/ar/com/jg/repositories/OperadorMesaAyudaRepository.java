@@ -3,10 +3,10 @@ package ar.com.jg.repositories;
 import ar.com.jg.model.OperadorMesaAyuda;
 import jakarta.persistence.EntityManager;
 import jakarta.persistence.NoResultException;
-import jakarta.persistence.Query;
-import jakarta.persistence.TypedQuery;
 
+import javax.swing.*;
 import java.util.List;
+
 
 public class OperadorMesaAyudaRepository implements CrudRepository<OperadorMesaAyuda>{
 
@@ -27,6 +27,20 @@ public class OperadorMesaAyudaRepository implements CrudRepository<OperadorMesaA
     public OperadorMesaAyuda buscarPorId(Long id) {
 
         return em.find(OperadorMesaAyuda.class, id);
+
+    }
+
+    public OperadorMesaAyuda buscarPorLegajo(Long legajo) {
+
+        try {
+
+            return em.createQuery("from OperadorMesaAyuda o where o.legajo = :legajo", OperadorMesaAyuda.class).setParameter("legajo", legajo).getSingleResult();
+
+        } catch (NoResultException e) {
+
+            return null;
+
+        }
 
     }
 
@@ -51,9 +65,13 @@ public class OperadorMesaAyudaRepository implements CrudRepository<OperadorMesaA
 
             em.merge(operadorMesaAyuda);
 
+            JOptionPane.showMessageDialog(null, "El Operador se ha modificado correctamente.");
+
         }else{
 
             em.persist(operadorMesaAyuda);
+
+            JOptionPane.showMessageDialog(null, "El Operador se ha ingresado correctamente.");
 
         }
 
