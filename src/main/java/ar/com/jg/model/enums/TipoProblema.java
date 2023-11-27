@@ -1,22 +1,20 @@
 package ar.com.jg.model.enums;
 
+
+import lombok.Getter;
+
 public enum TipoProblema {
 
-    Basico(0),
-    Intermedio(1),
-    Complejo(2);
+    Basico(180),
+    Intermedio(300),
+    Complejo(600);
 
-    private final int idTipoProblema;
+    @Getter
+    private final int tiempoResolucion;
 
-    private TipoProblema(int idTipoProblema) {
+    private TipoProblema(int tiempoResolucion) {
 
-        this.idTipoProblema = idTipoProblema;
-
-    }
-
-    public int getIdTipoProblema() {
-
-        return idTipoProblema;
+        this.tiempoResolucion = tiempoResolucion;
 
     }
 

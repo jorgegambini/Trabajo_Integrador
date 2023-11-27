@@ -2,10 +2,13 @@ package ar.com.jg.repositories;
 
 import ar.com.jg.model.Cliente;
 import jakarta.persistence.EntityManager;
+import jakarta.persistence.NoResultException;
 
+import javax.swing.*;
 import java.util.List;
 
-public class ClienteRepository implements CrudRepository<Cliente>{
+
+public class ClienteRepository implements CrudRepository<Cliente> {
 
     private EntityManager em;
 
@@ -16,7 +19,7 @@ public class ClienteRepository implements CrudRepository<Cliente>{
     @Override
     public List<Cliente> listar() {
 
-        return em.createQuery("from Cliente",Cliente.class).getResultList();
+        return em.createQuery("from Cliente", Cliente.class).getResultList();
 
     }
 
@@ -27,16 +30,34 @@ public class ClienteRepository implements CrudRepository<Cliente>{
 
     }
 
+    public Cliente buscarPorCUIT(Long cuit) {
+
+        try {
+
+            return em.createQuery("from Cliente c where c.cuit = :cuit", Cliente.class).setParameter("cuit", cuit).getSingleResult();
+
+        } catch (NoResultException e) {
+
+            return null;
+
+        }
+
+    }
+
     @Override
     public void guardar(Cliente cliente) {
 
-        if(cliente.getId() != null && cliente.getId() > 0){
+        if (cliente.getId() != null && cliente.getId() > 0) {
 
             em.merge(cliente);
 
-        }else{
+            JOptionPane.showMessageDialog(null, "El Cliente se ha actualizado correctamente.");
+
+        } else {
 
             em.persist(cliente);
+
+            JOptionPane.showMessageDialog(null, "El Cliente se ha ingresado correctamente.");
 
         }
 

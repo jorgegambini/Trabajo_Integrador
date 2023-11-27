@@ -4,12 +4,12 @@ import ar.com.jg.model.DatosContacto;
 import ar.com.jg.model.Servicio;
 import ar.com.jg.model.Cliente;
 import ar.com.jg.services.*;
+import ar.com.jg.view.accessories.*;
 import jakarta.persistence.EntityManager;
-import net.miginfocom.swing.MigLayout;
+import lombok.Getter;
+import lombok.Setter;
 
 import javax.swing.*;
-import java.awt.event.ItemEvent;
-import java.awt.event.ItemListener;
 
 
 public class ClienteForm {
@@ -19,6 +19,7 @@ public class ClienteForm {
     private IngresarTexto ingresarTexto;
     private IngresarNumero ingresarNumero;
     private IngresarServicio ingresarServicio;
+    private MostrarClientes mostrarClientes;
 
     private int valorRetornado;
     private String opcionMenu;
@@ -35,13 +36,22 @@ public class ClienteForm {
     private DatosContactoService ds;
     DatosContacto datosContacto;
     private ServicioService ss;
+    @Getter
+    @Setter
     Servicio servicio;
+
+    private EntityManager em;
+    @Getter
+    @Setter
+    private int cantidadElementosCombo;
 
     public ClienteForm(EntityManager em) {
 
         cs = new ClienteServiceImpl(em);
         ds = new DatosContactoServiceImpl(em);
         ss = new ServicioServiceImpl(em);
+
+        this.em = em;
 
         init();
 
@@ -55,11 +65,12 @@ public class ClienteForm {
                 1 - INGRESAR UN CLIENTE.<br>
                 2 - EDITAR UN CLIENTE.<br>
                 3 - ELIMINAR UN CLIENTE.<br>
-                4 - SALIR.<br><br></html>""";
+                4 - LISTAR CLIENTES.<br>
+                5 - SALIR.<br><br></html>""";
 
         do {
 
-            menuForm = new MenuForm(menuOperadorMesaAyuda, 200, 0);
+            menuForm = new MenuForm(menuOperadorMesaAyuda, 200, 0, 5);
             valorRetornado = JOptionPane.showOptionDialog(null, menuForm, "Seleccione una Opcion", JOptionPane.OK_OPTION, JOptionPane.INFORMATION_MESSAGE, null, new Object[]{"Aceptar"}, "Aceptar");
 
             if (JOptionPane.OK_OPTION == valorRetornado) {
@@ -80,7 +91,7 @@ public class ClienteForm {
 
                         do {
 
-                            ingresarNumero = new IngresarNumero("Legajo:", "", 60, 60, 100);
+                            ingresarNumero = new IngresarNumero("CUIT:", "0", 60, 100, 100, true);
                             valorRetornado = JOptionPane.showOptionDialog(null, ingresarNumero, "Ingrese CUIT", JOptionPane.OK_CANCEL_OPTION, JOptionPane.INFORMATION_MESSAGE, null, null, null);
 
                             if (JOptionPane.OK_OPTION == valorRetornado) {
@@ -95,7 +106,7 @@ public class ClienteForm {
 
                                     do {
 
-                                        ingresarTexto = new IngresarTexto("Razón Social:", "", 90, 150, 0);
+                                        ingresarTexto = new IngresarTexto("Razón Social:", "", 90, 200, 0);
                                         valorRetornado = JOptionPane.showOptionDialog(null, ingresarTexto, "Ingrese Razón Social", JOptionPane.OK_CANCEL_OPTION, JOptionPane.INFORMATION_MESSAGE, null, null, null);
 
                                         if (JOptionPane.OK_OPTION == valorRetornado) {
@@ -110,7 +121,7 @@ public class ClienteForm {
 
                                                 do {
 
-                                                    ingresarNumero = new IngresarNumero("Telefono:", "0", 70, 100, 0);
+                                                    ingresarNumero = new IngresarNumero("Telefono:", "0", 70, 100, 0, true);
                                                     valorRetornado = JOptionPane.showOptionDialog(null, ingresarNumero, "Ingrese Telefono", JOptionPane.OK_CANCEL_OPTION, JOptionPane.INFORMATION_MESSAGE, null, null, null);
 
                                                     if (JOptionPane.OK_OPTION == valorRetornado) {
@@ -125,7 +136,7 @@ public class ClienteForm {
 
                                                             do {
 
-                                                                ingresarNumero = new IngresarNumero("Celular:", "0", 70, 100, 0);
+                                                                ingresarNumero = new IngresarNumero("Celular:", "0", 70, 100, 0, true);
                                                                 valorRetornado = JOptionPane.showOptionDialog(null, ingresarNumero, "Ingrese Celular", JOptionPane.OK_CANCEL_OPTION, JOptionPane.INFORMATION_MESSAGE, null, null, null);
 
                                                                 if (JOptionPane.OK_OPTION == valorRetornado) {
@@ -140,7 +151,7 @@ public class ClienteForm {
 
                                                                         do {
 
-                                                                            ingresarTexto = new IngresarTexto("Email:", "", 70, 150, 0);
+                                                                            ingresarTexto = new IngresarTexto("Email:", "", 70, 250, 0);
                                                                             valorRetornado = JOptionPane.showOptionDialog(null, ingresarTexto, "Ingrese Email", JOptionPane.OK_CANCEL_OPTION, JOptionPane.INFORMATION_MESSAGE, null, null, null);
 
                                                                             if (JOptionPane.OK_OPTION == valorRetornado) {
@@ -166,24 +177,28 @@ public class ClienteForm {
 
                                                                                         do {
 
-                                                                                            ingresarServicio = new IngresarServicio();
+                                                                                            ingresarServicio = new IngresarServicio(em, null);
                                                                                             valorRetornado = JOptionPane.showOptionDialog(null, ingresarServicio, "Ingrese Servicio", JOptionPane.OK_CANCEL_OPTION, JOptionPane.INFORMATION_MESSAGE, null, null, null);
 
                                                                                             if (JOptionPane.OK_OPTION == valorRetornado) {
 
-                                                                                                cliente.addServicio(servicio);
+                                                                                                cliente.addServicio(ingresarServicio.getServicio());
 
                                                                                             }
 
-                                                                                        } while (valorRetornado == JOptionPane.CLOSED_OPTION || (valorRetornado == JOptionPane.CANCEL_OPTION && cliente.getServicios().isEmpty()));
+                                                                                        } while (valorRetornado == JOptionPane.CLOSED_OPTION || (valorRetornado == JOptionPane.CANCEL_OPTION && cliente.getServicios().isEmpty() && ingresarServicio.getCantidadElementosCombo() != 0));
 
-                                                                                        valorRetornado = JOptionPane.showOptionDialog(null, "Desea agregar otro Servicio?", "Ingrese Servicio", JOptionPane.OK_CANCEL_OPTION, JOptionPane.INFORMATION_MESSAGE, null, null, null);
+                                                                                        if (valorRetornado == JOptionPane.OK_OPTION && cliente.getServicios().size() > 0 && ingresarServicio.getCantidadElementosCombo() != 0) {
+
+                                                                                            valorRetornado = JOptionPane.showOptionDialog(null, "Desea agregar otro servicio?", "Ingrese Servicio", JOptionPane.OK_CANCEL_OPTION, JOptionPane.INFORMATION_MESSAGE, null, null, null);
+
+                                                                                        } else
+                                                                                            valorRetornado = JOptionPane.CLOSED_OPTION;
 
                                                                                     } while (valorRetornado == JOptionPane.OK_OPTION);
 
-                                                                                    cs.guardarCliente(cliente);
-
-                                                                                    JOptionPane.showMessageDialog(null, "El Cliente se ha ingresado correctamente.");
+                                                                                    if (valorRetornado != JOptionPane.CLOSED_OPTION)
+                                                                                        cs.guardarCliente(cliente);
 
                                                                                 }
 
@@ -226,220 +241,249 @@ public class ClienteForm {
                         strTelefono = "";
                         strCelular = "";
                         email = "";
-
                         do {
 
-                            ingresarNumero = new IngresarNumero("ID:", "0", 20, 50, 150);
-                            valorRetornado = JOptionPane.showOptionDialog(null, ingresarNumero, "Ingrese ID", JOptionPane.OK_CANCEL_OPTION, JOptionPane.QUESTION_MESSAGE, null, null, null);
+                            //ingresarNumero = new IngresarNumero("ID:", "0", 20, 70, 130);
+                            //valorRetornado = JOptionPane.showOptionDialog(null, ingresarNumero, "Ingrese ID", JOptionPane.OK_CANCEL_OPTION, JOptionPane.QUESTION_MESSAGE, null, null, null);
+
+                            //if (JOptionPane.OK_OPTION == valorRetornado) {
+
+                            //strID = ingresarNumero.getNumero().trim();
+
+                            //if (!validarNumero(strID)) {
+
+                            //JOptionPane.showMessageDialog(null, "Ingrese un Id Correcto.");
+
+                            //} else if (cs.buscarClientePorId(Long.valueOf(ingresarNumero.getNumero().trim())).isEmpty()) {
+
+                            //JOptionPane.showMessageDialog(null, "El Id ingresado no existe.");
+
+                            //}else {
+
+                            //do {
+
+                            //cliente = cs.buscarClientePorId(Long.valueOf(ingresarNumero.getNumero().trim())).get();
+                            //datosContacto = cliente.getDatosContacto();
+
+                            //ingresarNumero = new IngresarNumero("CUIT:", cliente.getCuit().toString(), 60, 100, 100);
+                            ingresarNumero = new IngresarNumero("CUIT:", "0", 60, 100, 100, true);
+                            valorRetornado = JOptionPane.showOptionDialog(null, ingresarNumero, "Ingrese CUIT", JOptionPane.OK_CANCEL_OPTION, JOptionPane.INFORMATION_MESSAGE, null, null, null);
 
                             if (JOptionPane.OK_OPTION == valorRetornado) {
 
-                                strID = ingresarNumero.getNumero().trim();
+                                strCUIT = ingresarNumero.getNumero().trim();
 
-                                if (!validarNumero(strID)) {
+                                if (!validarCUIT(strCUIT)) {
 
-                                    JOptionPane.showMessageDialog(null, "Ingrese un Id Correcto.");
+                                    JOptionPane.showMessageDialog(null, "Ingrese un CUIT Correcto.");
 
-                                } else if (cs.buscarClientePorId(Long.valueOf(ingresarNumero.getNumero().trim())).isEmpty()) {
+                                } else if (cs.buscarClientePorCUIT(Long.valueOf(ingresarNumero.getNumero().trim())).isEmpty()) {
 
-                                    JOptionPane.showMessageDialog(null, "El Id ingresado no existe.");
+                                    JOptionPane.showMessageDialog(null, "ElCUIT ingresado no existe.");
+
 
                                 } else {
 
                                     do {
 
-                                        cliente = cs.buscarClientePorId(Long.valueOf(ingresarNumero.getNumero().trim())).get();
+                                        cliente = cs.buscarClientePorCUIT(Long.valueOf(ingresarNumero.getNumero().trim())).get();
                                         datosContacto = cliente.getDatosContacto();
 
-                                        ingresarNumero = new IngresarNumero("Legajo:", cliente.getCuit().toString(), 60, 60, 100);
-                                        valorRetornado = JOptionPane.showOptionDialog(null, ingresarNumero, "Ingrese CUIT", JOptionPane.OK_CANCEL_OPTION, JOptionPane.INFORMATION_MESSAGE, null, null, null);
+                                        ingresarTexto = new IngresarTexto("Nombre:", cliente.getRazonSocial(), 90, 200, 0);
+                                        valorRetornado = JOptionPane.showOptionDialog(null, ingresarTexto, "Ingrese Razon Social", JOptionPane.OK_CANCEL_OPTION, JOptionPane.INFORMATION_MESSAGE, null, null, null);
 
                                         if (JOptionPane.OK_OPTION == valorRetornado) {
 
-                                            strCUIT = ingresarNumero.getNumero().trim();
+                                            razonSocial = ingresarTexto.getTexto().trim();
 
-                                            if (!validarCUIT(strCUIT)) {
+                                            if (!validarTexto1(razonSocial)) {
 
-                                                JOptionPane.showMessageDialog(null, "Ingrese un CUIT Correcto.");
+                                                JOptionPane.showMessageDialog(null, "Ingrese una Razón Social Correcta.");
 
                                             } else {
 
                                                 do {
 
-                                                    ingresarTexto = new IngresarTexto("Nombre:", cliente.getRazonSocial(), 90, 150, 0);
-                                                    valorRetornado = JOptionPane.showOptionDialog(null, ingresarTexto, "Ingrese Razon Social", JOptionPane.OK_CANCEL_OPTION, JOptionPane.INFORMATION_MESSAGE, null, null, null);
+                                                    ingresarNumero = new IngresarNumero("Telefono:", cliente.getDatosContacto().getTelefono().toString(), 70, 100, 0, true);
+                                                    valorRetornado = JOptionPane.showOptionDialog(null, ingresarNumero, "Ingrese Telefono", JOptionPane.OK_CANCEL_OPTION, JOptionPane.INFORMATION_MESSAGE, null, null, null);
 
                                                     if (JOptionPane.OK_OPTION == valorRetornado) {
 
-                                                        razonSocial = ingresarTexto.getTexto().trim();
+                                                        strTelefono = ingresarNumero.getNumero().trim();
 
-                                                        if (!validarTexto1(razonSocial)) {
+                                                        if (!validarTelefono(strTelefono)) {
 
-                                                            JOptionPane.showMessageDialog(null, "Ingrese una Razón Social Correcta.");
+                                                            JOptionPane.showMessageDialog(null, "Ingrese un Telefono Correcto.");
 
                                                         } else {
 
                                                             do {
 
-                                                                ingresarNumero = new IngresarNumero("Telefono:", cliente.getDatosContacto().getTelefono().toString(), 70, 100, 0);
-                                                                valorRetornado = JOptionPane.showOptionDialog(null, ingresarNumero, "Ingrese Telefono", JOptionPane.OK_CANCEL_OPTION, JOptionPane.INFORMATION_MESSAGE, null, null, null);
+                                                                ingresarNumero = new IngresarNumero("Celular:", cliente.getDatosContacto().getCelular().toString(), 70, 100, 0, true);
+                                                                valorRetornado = JOptionPane.showOptionDialog(null, ingresarNumero, "Ingrese Celular", JOptionPane.OK_CANCEL_OPTION, JOptionPane.INFORMATION_MESSAGE, null, null, null);
 
                                                                 if (JOptionPane.OK_OPTION == valorRetornado) {
 
-                                                                    strTelefono = ingresarNumero.getNumero().trim();
+                                                                    strCelular = ingresarNumero.getNumero().trim();
 
-                                                                    if (!validarTelefono(strTelefono)) {
+                                                                    if (!validarTelefono(strCelular)) {
 
-                                                                        JOptionPane.showMessageDialog(null, "Ingrese un Telefono Correcto.");
+                                                                        JOptionPane.showMessageDialog(null, "Ingrese un Celular Correcto.");
 
                                                                     } else {
 
                                                                         do {
 
-                                                                            ingresarNumero = new IngresarNumero("Celular:", cliente.getDatosContacto().getCelular().toString(), 70, 100, 0);
-                                                                            valorRetornado = JOptionPane.showOptionDialog(null, ingresarNumero, "Ingrese Celular", JOptionPane.OK_CANCEL_OPTION, JOptionPane.INFORMATION_MESSAGE, null, null, null);
+                                                                            ingresarTexto = new IngresarTexto("Email:", cliente.getDatosContacto().getEmail(), 70, 250, 0);
+                                                                            valorRetornado = JOptionPane.showOptionDialog(null, ingresarTexto, "Ingrese Email", JOptionPane.OK_CANCEL_OPTION, JOptionPane.INFORMATION_MESSAGE, null, null, null);
 
                                                                             if (JOptionPane.OK_OPTION == valorRetornado) {
 
-                                                                                strCelular = ingresarNumero.getNumero().trim();
+                                                                                email = ingresarTexto.getTexto().trim();
 
-                                                                                if (!validarTelefono(strCelular)) {
+                                                                                if (!validarEmail(email)) {
 
-                                                                                    JOptionPane.showMessageDialog(null, "Ingrese un Celular Correcto.");
+                                                                                    JOptionPane.showMessageDialog(null, "Ingrese un Email Correcto.");
 
                                                                                 } else {
 
-                                                                                    do {
+                                                                                    datosContacto.setTelefono(Long.valueOf(strTelefono));
+                                                                                    datosContacto.setCelular(Long.valueOf(strCelular));
+                                                                                    datosContacto.setEmail(email);
+                                                                                    cliente.setCuit(Long.valueOf(strCUIT));
+                                                                                    cliente.setRazonSocial(razonSocial);
+                                                                                    cliente.setDatosContacto(datosContacto);
 
-                                                                                        ingresarTexto = new IngresarTexto("Email:", cliente.getDatosContacto().getEmail(), 70, 150, 0);
-                                                                                        valorRetornado = JOptionPane.showOptionDialog(null, ingresarTexto, "Ingrese Email", JOptionPane.OK_CANCEL_OPTION, JOptionPane.INFORMATION_MESSAGE, null, null, null);
+                                                                                    valorRetornado = JOptionPane.showOptionDialog(null, "Desea recargar los Servicios?", "Ingrese Servicios", JOptionPane.OK_CANCEL_OPTION, JOptionPane.INFORMATION_MESSAGE, null, null, null);
 
-                                                                                        if (JOptionPane.OK_OPTION == valorRetornado) {
+                                                                                    if (JOptionPane.OK_OPTION == valorRetornado) {
 
-                                                                                            email = ingresarTexto.getTexto().trim();
+                                                                                        cliente.getServicios().clear();
 
-                                                                                            if (!validarEmail(email)) {
+                                                                                        do {
 
-                                                                                                JOptionPane.showMessageDialog(null, "Ingrese un Email Correcto.");
+                                                                                            do {
 
-                                                                                            } else {
-
-                                                                                                datosContacto.setTelefono(Long.valueOf(strTelefono));
-                                                                                                datosContacto.setCelular(Long.valueOf(strCelular));
-                                                                                                datosContacto.setEmail(email);
-                                                                                                cliente.setCuit(Long.valueOf(strCUIT));
-                                                                                                cliente.setRazonSocial(razonSocial);
-                                                                                                cliente.setDatosContacto(datosContacto);
-
-                                                                                                valorRetornado = JOptionPane.showOptionDialog(null, "Desea recargar los Servicioss", "Ingrese Servicios", JOptionPane.OK_CANCEL_OPTION, JOptionPane.INFORMATION_MESSAGE, null, null, null);
+                                                                                                ingresarServicio = new IngresarServicio(em, null);
+                                                                                                valorRetornado = JOptionPane.showOptionDialog(null, ingresarServicio, "Ingrese Servicio", JOptionPane.OK_CANCEL_OPTION, JOptionPane.INFORMATION_MESSAGE, null, null, null);
 
                                                                                                 if (JOptionPane.OK_OPTION == valorRetornado) {
 
-                                                                                                    cliente.getServicios().clear();
-
-                                                                                                    do {
-
-                                                                                                        do {
-
-                                                                                                            ingresarServicio = new IngresarServicio();
-                                                                                                            valorRetornado = JOptionPane.showOptionDialog(null, ingresarServicio, "Ingrese Servicio", JOptionPane.OK_CANCEL_OPTION, JOptionPane.INFORMATION_MESSAGE, null, null, null);
-
-                                                                                                            if (JOptionPane.OK_OPTION == valorRetornado) {
-
-                                                                                                                cliente.addServicio(servicio);
-
-                                                                                                            }
-
-                                                                                                        } while (valorRetornado == JOptionPane.CLOSED_OPTION || (valorRetornado == JOptionPane.CANCEL_OPTION && cliente.getServicios().isEmpty()));
-
-                                                                                                        valorRetornado = JOptionPane.showOptionDialog(null, "Desea agregar otro Servicio?", "Ingrese Servicio", JOptionPane.OK_CANCEL_OPTION, JOptionPane.INFORMATION_MESSAGE, null, null, null);
-
-                                                                                                    } while (valorRetornado == JOptionPane.OK_OPTION);
+                                                                                                    cliente.addServicio(ingresarServicio.getServicio());
 
                                                                                                 }
 
-                                                                                                cs.guardarCliente(cliente);
+                                                                                            } while (valorRetornado == JOptionPane.CLOSED_OPTION || (valorRetornado == JOptionPane.CANCEL_OPTION && cliente.getServicios().isEmpty() && ingresarServicio.getCantidadElementosCombo() != 0));
 
-                                                                                                JOptionPane.showMessageDialog(null, "El Cliente se ha modificado correctamente.");
+                                                                                            //System.out.println(cliente.getServicios().size());
+                                                                                            //System.out.println(ingresarServicio.getCantidadElementosCombo());
 
-                                                                                            }
+                                                                                            if (valorRetornado == JOptionPane.OK_OPTION && cliente.getServicios().size() > 0 && ingresarServicio.getCantidadElementosCombo() != 0) {
 
-                                                                                        }
+                                                                                                valorRetornado = JOptionPane.showOptionDialog(null, "Desea agregar otro Servicio?", "Ingrese Servicio", JOptionPane.OK_CANCEL_OPTION, JOptionPane.INFORMATION_MESSAGE, null, null, null);
 
-                                                                                    } while (!validarEmail(email) && (valorRetornado == JOptionPane.CLOSED_OPTION || valorRetornado == JOptionPane.OK_OPTION));
+                                                                                            } else
+                                                                                                valorRetornado = JOptionPane.CLOSED_OPTION;
+
+                                                                                        } while (valorRetornado == JOptionPane.OK_OPTION);
+
+                                                                                    } //else valorRetornado = JOptionPane.CLOSED_OPTION;
+
+                                                                                    if (valorRetornado != JOptionPane.CLOSED_OPTION)
+                                                                                        cs.guardarCliente(cliente);
 
                                                                                 }
 
                                                                             }
 
-                                                                        } while (!validarTelefono(strCelular) && (valorRetornado == JOptionPane.CLOSED_OPTION || valorRetornado == JOptionPane.OK_OPTION));
+                                                                        }
+                                                                        while (!validarEmail(email) && (valorRetornado == JOptionPane.CLOSED_OPTION || valorRetornado == JOptionPane.OK_OPTION))
+                                                                                ;
 
                                                                     }
 
                                                                 }
 
-                                                            } while (!validarTelefono(strTelefono) && (valorRetornado == JOptionPane.CLOSED_OPTION || valorRetornado == JOptionPane.OK_OPTION));
+                                                            }
+                                                            while (!validarTelefono(strCelular) && (valorRetornado == JOptionPane.CLOSED_OPTION || valorRetornado == JOptionPane.OK_OPTION))
+                                                                    ;
 
                                                         }
 
                                                     }
 
-                                                } while (!validarTexto1(razonSocial) && (valorRetornado == JOptionPane.CLOSED_OPTION || valorRetornado == JOptionPane.OK_OPTION));
+                                                }
+                                                while (!validarTelefono(strTelefono) && (valorRetornado == JOptionPane.CLOSED_OPTION || valorRetornado == JOptionPane.OK_OPTION))
+                                                        ;
 
                                             }
 
                                         }
 
-                                    } while (!validarCUIT(strCUIT) && (valorRetornado == JOptionPane.CLOSED_OPTION || valorRetornado == JOptionPane.OK_OPTION));
+                                    }
+                                    while (!validarTexto1(razonSocial) && (valorRetornado == JOptionPane.CLOSED_OPTION || valorRetornado == JOptionPane.OK_OPTION))
+                                            ;
 
                                 }
 
                             }
 
-                        } while (!validarNumero(strID) && (valorRetornado == JOptionPane.CLOSED_OPTION || valorRetornado == JOptionPane.OK_OPTION));
+                        } while (!validarCUIT(strCUIT) && (valorRetornado == JOptionPane.CLOSED_OPTION || valorRetornado == JOptionPane.OK_OPTION));
+
+                        //}
+
+                        //}
+
+                        //}while (!validarNumero(strID) && (valorRetornado == JOptionPane.CLOSED_OPTION || valorRetornado == JOptionPane.OK_OPTION)) ;
 
                         valorRetornado = JOptionPane.CANCEL_OPTION;
 
                     }
                     case "3" -> {
 
-                        strID = "";
+                        //strID = "";
+                        strCUIT = "";
 
                         do {
 
-                            ingresarNumero = new IngresarNumero("ID:", "0", 20, 50, 150);
-                            valorRetornado = JOptionPane.showOptionDialog(null, ingresarNumero, "Ingrese ID", JOptionPane.OK_CANCEL_OPTION, JOptionPane.QUESTION_MESSAGE, null, null, null);
+                            ingresarNumero = new IngresarNumero("CUIT:", "0", 60, 100, 100, true);
+                            valorRetornado = JOptionPane.showOptionDialog(null, ingresarNumero, "Ingrese CUIT", JOptionPane.OK_CANCEL_OPTION, JOptionPane.QUESTION_MESSAGE, null, null, null);
 
                             if (JOptionPane.OK_OPTION == valorRetornado) {
 
-                                strID = ingresarNumero.getNumero().trim();
+                                strCUIT = ingresarNumero.getNumero().trim();
 
-                                if (!validarNumero(strID)) {
+                                if (!validarCUIT(strCUIT)) {
 
-                                    JOptionPane.showMessageDialog(null, "Ingrese un Id Correcto.");
+                                    JOptionPane.showMessageDialog(null, "Ingrese un CUIT Correcto.");
 
-                                } else if (cs.buscarClientePorId(Long.valueOf(ingresarNumero.getNumero().trim())).isEmpty()) {
+                                } else if (cs.buscarClientePorCUIT(Long.valueOf(ingresarNumero.getNumero().trim())).isEmpty()) {
 
-                                    JOptionPane.showMessageDialog(null, "El Id ingresado no existe.");
+                                    JOptionPane.showMessageDialog(null, "El CUIT ingresado no existe.");
 
                                 } else {
 
-                                    cliente = cs.buscarClientePorId(Long.valueOf(ingresarNumero.getNumero().trim())).get();
+                                    cliente = cs.buscarClientePorCUIT(Long.valueOf(ingresarNumero.getNumero().trim())).get();
                                     cs.eliminarCliente(cliente.getId());
-
-                                    JOptionPane.showMessageDialog(null, "El Cliente se ha eliminado correctamente.");
 
                                 }
 
                             }
 
-                        } while (!validarNumero(strID) && (valorRetornado == JOptionPane.CLOSED_OPTION || valorRetornado == JOptionPane.OK_OPTION));
+                        }  while (!validarCUIT(strCUIT) && (valorRetornado == JOptionPane.CLOSED_OPTION || valorRetornado == JOptionPane.OK_OPTION));
 
                         valorRetornado = JOptionPane.CANCEL_OPTION;
 
                     }
 
-                    case "4" ->
+                    case "4" -> {
+                        mostrarClientes = new MostrarClientes(em);
+                        JOptionPane.showOptionDialog(null, mostrarClientes, "Listado Clientes", JOptionPane.OK_OPTION, JOptionPane.INFORMATION_MESSAGE, null, new Object[]{"Aceptar"}, "Aceptar");
+
+                        valorRetornado = JOptionPane.CANCEL_OPTION;
+                    }
+
+                    case "5" ->
                             valorRetornado = JOptionPane.showOptionDialog(null, "Está seguro que desea salir?", "Salir",
                                     JOptionPane.OK_CANCEL_OPTION, JOptionPane.QUESTION_MESSAGE, null, null, null);
 
@@ -447,114 +491,15 @@ public class ClienteForm {
 
             }
 
-        } while (valorRetornado != JOptionPane.OK_OPTION || !validarMenuOpcion(opcionMenu));
+        } while (valorRetornado != JOptionPane.OK_OPTION || !
 
-
-    }
-
-    private class IngresarTexto extends JPanel {
-
-        private JTextField textoField;
-
-        public IngresarTexto(String textLabel, String textField, int longLabel, int longField, int gap) {
-
-            setLayout(new MigLayout("wrap,fillx,insets 5 10 5 10", "[fill,50]"));
-
-            JLabel textoLabel = new JLabel(textLabel);
-            textoField = new JTextField();
-
-            textoField.setText(textField);
-
-            add(textoLabel, "split 2, width " + longLabel + ":" + longLabel + ":" + longLabel + ", growx");
-            add(textoField, "width " + longField + ":" + longField + ":" + longField + ", pushx, gapright " + gap);
-
-        }
-
-        public String getTexto() {
-
-            return textoField.getText();
-
-        }
-
-    }
-
-    private class IngresarNumero extends JPanel {
-
-        private JTextField numeroField;
-
-        public IngresarNumero(String numLabel, String textField, int longLabel, int longField, int gap) {
-
-            setLayout(new MigLayout("wrap,fillx,insets 5 10 5 10", "[fill,50]"));
-
-            JLabel numeroLabel = new JLabel(numLabel);
-            numeroField = new JTextField();
-
-            numeroField.setHorizontalAlignment(SwingConstants.RIGHT);
-            numeroField.setText(textField);
-
-            add(numeroLabel, "split 2, width " + longLabel + ":" + longLabel + ":" + longLabel + ", growx");
-            add(numeroField, "width " + longField + ":" + longField + ":" + longField + ", pushx, gapright " + gap);
-
-        }
-
-        public String getNumero() {
-
-            return numeroField.getText();
-
-        }
-
-    }
-
-    private class IngresarServicio extends JPanel {
-
-        private JComboBox comboField;
-
-        public IngresarServicio() {
-
-            setLayout(new MigLayout("wrap,fillx,insets 5 10 5 10", "[fill,50]"));
-
-            JLabel textoLabel = new JLabel("Servicio:");
-            comboField = new JComboBox();
-
-            add(textoLabel, "split 2, width 90:90:90, growx");
-            add(comboField, "width 150:150:150, pushx, gapright 0");
-
-            comboField.addItemListener(new ItemListener() {
-
-                @Override
-                public void itemStateChanged(ItemEvent e) {
-
-                    if (e.getStateChange() == ItemEvent.SELECTED) {
-
-                        servicio = (Servicio) comboField.getSelectedItem();
-
-                    }
-                }
-            });
-
-            getEspecialidad();
-
-        }
-
-        private void getEspecialidad() {
-
-            comboField.removeAllItems();
-
-            ss.listarServicios().forEach(esp -> comboField.addItem(esp));
-
-            if (comboField.getItemCount() > 0) {
-
-                servicio = (Servicio) comboField.getSelectedItem();
-
-            }
-
-        }
+                validarMenuOpcion(opcionMenu));
 
 
     }
 
     private boolean validarMenuOpcion(String args) {
-        return args.matches("^[1-4]$");
+        return args.matches("^[1-5]$");
     }
 
     private boolean validarNumero(String numero) {
@@ -581,21 +526,9 @@ public class ClienteForm {
 
     }
 
-    private boolean validarTexto(String denominacion) {
-
-        return denominacion.matches("^([A-ZÁÉÍÓÚÜÑ0-9]([A-ZÁÉÍÓÚÜÑa-záéíóüñ0-9]+))([ ][A-ZÁÉÍÓÚÜÑ0-9]([A-ZÁÉÍÓÚÜÑa-záéíóüñ0-9]*)){0,5}");
-
-    }
-
     private boolean validarTexto1(String denominacion) {
 
         return denominacion.matches("^([A-ZÁÉÍÓÚÜÑa-záéíóüñ0-9]([A-ZÁÉÍÓÚÜÑa-záéíóüñ0-9]+))([ ][A-ZÁÉÍÓÚÜÑa-záéíóüñ0-9]([A-ZÁÉÍÓÚÜÑa-záéíóüñ0-9]*)){0,5}");
-
-    }
-
-    private boolean validarNombre(String denominacion) {
-
-        return denominacion.matches("^([A-ZÁÉÍÓÚÜÑ]([a-záéíóüñ]+))([ ][A-ZÁÉÍÓÚÜÑ]([a-záéíóüñ]*)){0,5}");
 
     }
 

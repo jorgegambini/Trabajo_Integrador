@@ -1,11 +1,11 @@
 package ar.com.jg.repositories;
 
 import ar.com.jg.model.Especialidad;
-import ar.com.jg.model.Tecnico;
 import jakarta.persistence.EntityManager;
 import jakarta.persistence.NoResultException;
-
+import javax.swing.*;
 import java.util.List;
+
 
 public class EspecialidadRepository implements CrudRepository<Especialidad>{
 
@@ -56,9 +56,13 @@ public class EspecialidadRepository implements CrudRepository<Especialidad>{
 
             em.merge(especialidad);
 
+            JOptionPane.showMessageDialog(null, "La Especialidad se ha modificado correctamente.");
+
         }else{
 
             em.persist(especialidad);
+
+            JOptionPane.showMessageDialog(null, "La Especialidad se ha ingresado correctamente.");
 
         }
 

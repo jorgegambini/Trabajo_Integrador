@@ -4,11 +4,12 @@ import ar.com.jg.model.Especialidad;
 import ar.com.jg.repositories.CrudRepository;
 import ar.com.jg.repositories.EspecialidadRepository;
 import jakarta.persistence.EntityManager;
-
+import javax.swing.*;
 import java.util.List;
 import java.util.Optional;
 
-public class EspecialidadServiceImpl implements EspecialidadService{
+
+public class EspecialidadServiceImpl implements EspecialidadService {
 
     private EntityManager em;
     private CrudRepository<Especialidad> er;
@@ -29,7 +30,7 @@ public class EspecialidadServiceImpl implements EspecialidadService{
 
     public List<Especialidad> listarEspecialidadesSinServicio() {
 
-        return ((EspecialidadRepository)er).listarSinServicio();
+        return ((EspecialidadRepository) er).listarSinServicio();
 
     }
 
@@ -40,11 +41,13 @@ public class EspecialidadServiceImpl implements EspecialidadService{
 
     }
 
+    @Override
     public Optional<Especialidad> buscarEspecialidadPorDenominacion(String denominacion) {
 
-        return Optional.ofNullable(((EspecialidadRepository)er).buscarPorDenominacion(denominacion));
+        return Optional.ofNullable(((EspecialidadRepository) er).buscarPorDenominacion(denominacion));
 
     }
+
 
     @Override
     public void guardarEspecialidad(Especialidad especialidad) {
@@ -55,10 +58,10 @@ public class EspecialidadServiceImpl implements EspecialidadService{
             er.guardar(especialidad);
             em.getTransaction().commit();
 
-        }catch (Exception ex){
+        } catch (Exception ex) {
 
             em.getTransaction().rollback();
-            ex.printStackTrace(System.out);
+            JOptionPane.showMessageDialog(null, ex.getMessage());
 
         }
 
@@ -73,12 +76,15 @@ public class EspecialidadServiceImpl implements EspecialidadService{
             er.eliminar(id);
             em.getTransaction().commit();
 
-        }catch (Exception ex){
+            JOptionPane.showMessageDialog(null, "La Especialidad se ha eliminado correctamente.");
+
+        } catch (Exception ex) {
 
             em.getTransaction().rollback();
-            ex.printStackTrace(System.out);
+            JOptionPane.showMessageDialog(null, ex.getMessage());
 
         }
 
     }
+
 }

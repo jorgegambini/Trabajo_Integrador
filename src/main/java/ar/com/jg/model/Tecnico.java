@@ -2,7 +2,6 @@ package ar.com.jg.model;
 
 import jakarta.persistence.*;
 import lombok.*;
-
 import javax.swing.*;
 import java.util.ArrayList;
 import java.util.List;
@@ -13,12 +12,12 @@ import java.util.List;
 @AttributeOverride(name = "id", column = @Column(name = "id_tecnico"))
 //@NoArgsConstructor
 @Getter @Setter
-@ToString(callSuper = true)
+//@ToString(callSuper = true)
 @EqualsAndHashCode(callSuper = true)
-public class Tecnico extends Empleado{
+public class Tecnico extends Empleado implements Comparable<Tecnico>{
 
     @ManyToMany(fetch = FetchType.LAZY, targetEntity = Especialidad.class, cascade = {CascadeType.PERSIST, CascadeType.MERGE})
-    @JoinTable(name = "tecnico_especialidad", joinColumns = @JoinColumn(name = "id_tecnico"), inverseJoinColumns = @JoinColumn(name = "id_especialidad"), uniqueConstraints = @UniqueConstraint(columnNames = {"id_tecnico", "id_especialidad"}))
+    @JoinTable(name = "tecnicos_especialidades", joinColumns = @JoinColumn(name = "id_tecnico"), inverseJoinColumns = @JoinColumn(name = "id_especialidad"), uniqueConstraints = @UniqueConstraint(columnNames = {"id_tecnico", "id_especialidad"}))
     @EqualsAndHashCode.Exclude
     private List<Especialidad> especialidades; //Many2Many
     @OneToMany(mappedBy = "tecnico", cascade = CascadeType.ALL, orphanRemoval = true, fetch = FetchType.LAZY)
@@ -88,7 +87,20 @@ public class Tecnico extends Empleado{
             JOptionPane.showMessageDialog(null, "La Especialidad ya fue quitada con anterioridad.");
 
         }
+
         return this;
+
+    }
+
+    @Override
+    public int compareTo(Tecnico o) {
+        return (int)(this.getId() - o.getId());
+    }
+
+    @Override
+    public String toString() {
+
+        return nombre + ", " + apellido;
 
     }
 

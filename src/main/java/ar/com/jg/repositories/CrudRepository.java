@@ -2,6 +2,7 @@ package ar.com.jg.repositories;
 
 import java.util.List;
 
+
 public interface CrudRepository<T> {
 
     List<T> listar();

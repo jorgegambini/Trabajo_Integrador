@@ -9,6 +9,7 @@ public interface EspecialidadService {
 
     List<Especialidad> listarEspecialidades();
     Optional<Especialidad> buscarEspecialidadPorId(Long id);
+    Optional<Especialidad> buscarEspecialidadPorDenominacion(String denominacion);
     void guardarEspecialidad(Especialidad especialidad);
     void eliminarEspecialidad(long id);
 

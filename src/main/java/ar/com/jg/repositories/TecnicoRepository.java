@@ -4,7 +4,9 @@ import ar.com.jg.model.Tecnico;
 import jakarta.persistence.EntityManager;
 import jakarta.persistence.NoResultException;
 
+import javax.swing.*;
 import java.util.List;
+
 
 public class TecnicoRepository implements CrudRepository<Tecnico> {
 
@@ -25,6 +27,20 @@ public class TecnicoRepository implements CrudRepository<Tecnico> {
     public Tecnico buscarPorId(Long id) {
 
         return em.find(Tecnico.class, id);
+
+    }
+
+    public Tecnico buscarPorLegajo(Long legajo) {
+
+        try {
+
+            return em.createQuery("from Tecnico t where t.legajo = :legajo", Tecnico.class).setParameter("legajo", legajo).getSingleResult();
+
+        } catch (NoResultException e) {
+
+            return null;
+
+        }
 
     }
 
@@ -49,9 +65,13 @@ public class TecnicoRepository implements CrudRepository<Tecnico> {
 
             em.merge(tecnico);
 
+            JOptionPane.showMessageDialog(null, "El Técnico se ha modificado correctamente.");
+
         }else{
 
             em.persist(tecnico);
+
+            JOptionPane.showMessageDialog(null, "El Técnico se ha ingresado correctamente.");
 
         }
 

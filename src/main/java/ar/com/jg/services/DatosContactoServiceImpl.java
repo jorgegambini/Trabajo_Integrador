@@ -4,9 +4,10 @@ import ar.com.jg.model.DatosContacto;
 import ar.com.jg.repositories.CrudRepository;
 import ar.com.jg.repositories.DatosContactoRepository;
 import jakarta.persistence.EntityManager;
-
+import javax.swing.*;
 import java.util.List;
 import java.util.Optional;
+
 
 public class DatosContactoServiceImpl implements DatosContactoService{
 
@@ -46,7 +47,7 @@ public class DatosContactoServiceImpl implements DatosContactoService{
         }catch (Exception ex){
 
             em.getTransaction().rollback();
-            ex.printStackTrace(System.out);
+            JOptionPane.showMessageDialog(null, ex.getMessage());
 
         }
 
@@ -64,9 +65,10 @@ public class DatosContactoServiceImpl implements DatosContactoService{
         }catch (Exception ex){
 
             em.getTransaction().rollback();
-            ex.printStackTrace(System.out);
+            JOptionPane.showMessageDialog(null, ex.getMessage());
 
         }
 
     }
+
 }
