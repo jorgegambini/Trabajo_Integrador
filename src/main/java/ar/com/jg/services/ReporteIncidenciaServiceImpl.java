@@ -31,23 +31,9 @@ public class ReporteIncidenciaServiceImpl implements ReporteIncidenciaService{
     }
 
     @Override
-    public List<ReporteIncidencia> listarReportesIncidenciaPorRangoFecha(LocalDate fechaDesde, LocalDate fechaHasta) {
-
-        return ((ReporteIncidenciaRepository)rr).listarPorRangoFecha(fechaDesde, fechaHasta);
-
-    }
-
-    @Override
     public Optional<ReporteIncidencia> buscarReporteIncidenciaPorId(Long id) {
 
         return Optional.ofNullable(rr.buscarPorId(id));
-
-    }
-
-    @Override
-    public Optional<ReporteIncidencia> buscarReporteIncidenciaPorCodigo(String codigoReporte) {
-
-        return Optional.ofNullable(((ReporteIncidenciaRepository) rr).buscarPorCodigo(codigoReporte));
 
     }
 
